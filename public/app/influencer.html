@@ -1,0 +1,61 @@
+<div class="container">
+    <div class="alert alert-info" ng-if="$root.user && !$root.user.profile.doneTour"><big>First time here?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-white" ng-click="$root.openTourSlideShowPopup()">Take a tour</button> </big></div>
+    <h2>Celebrities</h2>
+    <p>Select up to 3 celebrities for your campaign, then click the Request a Campaign button and fill out the form. We'll handle the rest for you.</p>
+    <br>
+    <div ng-show="!($root.user.profile.pipedriveStatus == 'approved' || $root.user.profile.pipedriveStatus == 'active')" class="text-center">
+        <div class="card empty-msg-card">
+            <div class="card-block text-center">
+                <p>We are analyzing your account for some awesome data insights!</p>
+            </div>
+        </div>
+    </div>
+    <div ng-show="$root.user.profile.pipedriveStatus == 'approved' || $root.user.profile.pipedriveStatus == 'active'" >
+        <h4 class="pull-left">Select up to 3 celebrities</h4>
+        <div class="pull-right">
+            <button type="submit" ng-click="openRequestCampaignPopup()" ng-disabled="selectedCeleb.length == 0 || selectedCeleb.length > 3" class="btn btn-primary">Request a campaign</button>
+        </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <div ng-show="$root.user.profile.pipedriveStatus == 'approved' || $root.user.profile.pipedriveStatus == 'active'">
+        <h4 ng-show="suggestedCeleb.length > 0">Suggested Celebrities</h4>
+        <div class="row">
+            <div ng-repeat="celeb in suggestedCeleb" class="col-md-3" ng-init="celeb.isSelected = false">
+                <div class="match-item fp-media-card text-center">
+                        <div class="user-avatar col-md-12">
+                            <img ng-src="{{celeb.picture_url}}"/>
+                        </div>
+                    <div class="avatar-title col-md-12" ng-class="{'selected':celeb.isSelected}"><h4>{{celeb.title}}</h4><span ng-if="celeb.followers">{{celeb.followers|number:0}} followers</span><br>{{celeb.categories}}</div>
+
+                    <div class="match-item-action">
+                        <br>
+                        <br>
+                        <a class="btn btn-yellow-fill"  ng-click="toggleSelect(celeb)" ><span ng-show="!celeb.isSelected">Select</span><span ng-show="celeb.isSelected">Deselect</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr ng-show="suggestedCeleb.length > 0">
+        <h4 ng-show="suggestedCeleb.length > 0">Other Celebrities</h4>
+        <div class="row">
+            <div ng-repeat="celeb in allCeleb" class="col-md-3" ng-init="celeb.isSelected = false">
+                <div class="match-item fp-media-card text-center">
+                        <div class="user-avatar col-md-12">
+                            <img ng-src="{{celeb.picture_url}}"/>
+                        </div>
+                    <div class="avatar-title col-md-12" ng-class="{'selected':celeb.isSelected}"><h4>{{celeb.title}}</h4><span ng-if="celeb.followers">{{celeb.followers|number:0}} followers</span><br>{{celeb.categories}}</div>
+
+                    <div class="match-item-action">
+                        <br>
+                        <br>
+                        <a class="btn btn-yellow-fill"  ng-click="toggleSelect(celeb)" ><span ng-show="!celeb.isSelected">Select</span><span ng-show="celeb.isSelected">Deselect</span></a>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,210 @@
+<div class="container">
+    <h5><a ng-href="#/search?keyword={{currentSearchKeyword}}">
+        <i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back to Search
+    </a></h5>
+    <br>
+    <div class="page-title">
+        <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+        <h2 class="pull-left">&nbsp;CELEBRITY DETAILS</h2>
+    </div>
+    <p>Celebrity details are based on their Facebook Page insights.</p>
+
+    <br>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="match-item fp-media-card -horizontal">
+                <div class="pull-left user-avatar"  ng-style="{'background-image':'url(' + $root.currentCelebPage.picture.data.url + ')'}"></div>
+                <div class="avatar-title">
+                    <div>
+                        <h3>{{::$root.currentCelebPage.name}}<a class="pull-right"> <i class="fa fa-check-circle" ng-show="::$root.currentCelebPage.is_verified"><md-tooltip>Facebook Verified Page</md-tooltip></i></a></h3>
+                        <p class="note">{{::$root.currentCelebPage.category}}</p>
+                        <b>{{::$root.currentCelebPage.fan_count|number}} likes </b>
+                        <p ng-if="::!$root.currentCelebPage.is_verified">Last Post:{{::$root.currentCelebPage.posts.data[0].created_time|date:'shortDate'}}</p>
+                        <p>{{::$root.currentCelebPage.talking_about_count |number}} People Talking About<a class="pull-right" target="_blank" ng-href="https://www.facebook.com/{{::$root.currentCelebPage.id}}" title="{{::$root.currentCelebPage.name}}"><img class="fb-logo small-icon">&nbsp;View Facebook Page</a></p>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <br ng-show="$root.user">
+                        <div class="col-xs-12 text-center" ng-show="!$root.user">
+                            <h4><b>Sign Up to</b></h4>
+                            <br>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <md-button ng-show="$root.user" ng-click="startBuildAudience()" href class="pull-right btn md-accent md-raised btn-full-width"><h4 class="margin-10"><b>Build Custom Audience</b></h4></md-button>
+                            <md-button ng-show="!$root.user" ng-click="goToSignUpPage()" href class="pull-right btn md-accent md-raised btn-full-width"><h4 class="margin-10"><b>Build Custom Audience</b></h4></md-button>
+                        </div>
+                        <div class="col-xs-12 col-sm-6">
+                            <md-button ng-show="$root.user" ng-click="$root.openRequestCampaignPopup([$root.currentCelebPage])" href class="pull-right btn md-primary md-raised btn-full-width"><h4 class="margin-10"><b>RENT THIS PAGE</b></h4></md-button>
+                            <md-button ng-show="!$root.user" ng-click="goToSignUpPage()" href class="pull-right btn md-primary md-raised btn-full-width"><h4 class="margin-10"><b>RENT THIS PAGE</b></h4></md-button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-show="!loadedCelebDetails">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="cssload-container">
+            <md-progress-circular class="margin-auto"  md-mode="indeterminate"></md-progress-circular>
+        </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+    </div>
+    <div>
+
+        <div layout="row" layout-xs="column" layout-wrap>
+            <div flex flex-sm="50" >
+                <md-card class="widget" md-colors="::{ background: 'blue', color: 'white' }">
+                    <md-card-content layout="row" layout-align="space-between center">
+                        <md-icon class="font-size-5 margin-left-10 inherit-color" md-font-icon="fa fa-users"></md-icon>
+                        <div layout="column">
+                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis"  >{{$root.currentCelebPage.fp_engagement*100|number:2}}%</p>
+                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Engagement</p>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div flex flex-sm="50" >
+                <md-card  class="widget" md-colors="::{ background: 'pink', color: 'white' }">
+                    <md-card-content layout="row" layout-align="space-between center">
+                        <md-icon class="font-size-5 margin-left-10 inherit-color" md-font-icon="fa fa-thumbs-o-up"></md-icon>
+                        <div layout="column">
+                            <p ng-if="loadedCelebDetails && $root.user" class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">{{$root.currentCelebPage.totalAvgReactions|number:0}}</p>
+                            <img src="../img/mockReactions.png" ng-if="loadedCelebDetails && !$root.user" style="width:100%;"/>
+                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Avg. Reactions</p>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div flex flex-sm="50">
+                <md-card class="widget" md-colors="::{ background: 'green', color: 'white' }">
+                    <md-card-content layout="row" layout-align="space-between center">
+                        <md-icon class="font-size-5 margin-left-10 inherit-color" md-font-icon="fa fa-arrow-up"></md-icon>
+                        <div layout="column">
+                            <p ng-if="loadedCelebDetails && $root.user" class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">{{$root.currentCelebPage.totalLikes|number:0}}</p>
+                            <img src="../img/mockFansGrowth.png" ng-if="loadedCelebDetails && !$root.user" style="width:100%;"/>
+                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Fans Growth last week</p>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div flex flex-sm="50">
+                <md-card  class="widget" md-colors="::{ background: 'orange', color: 'white' }">
+                    <md-card-content layout="row" layout-align="space-between center">
+                        <md-icon class="font-size-5 margin-left-10 inherit-color" md-font-icon="fa fa-comments"></md-icon>
+                        <div layout="column">
+                            <p ng-if="loadedCelebDetails && $root.user" class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">{{$root.currentCelebPage.talking_about_count|number:0}}</p>
+                            <img src="../img/mockTalkingAbout.png" ng-if="loadedCelebDetails && !$root.user" style="width:100%;"/>
+                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Talking About</p>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <!--<counter-widget flex flex-sm="50" title="Likes" count="$root.currentCelebPage.fp_engagement*100" icon="fa fa-facebook"  background="blue-900" color="white"></counter-widget>-->
+            <!--<counter-widget flex flex-sm="50" title="Pageviews" count="$root.currentCelebPage.fp_engagement*100" icon="fa fa-eye"  background="green-500" color="white"></counter-widget>-->
+        </div>
+    </div>
+
+
+
+
+    <div ng-if="loadedCelebDetails && $root.user">
+        <div layout="row" layout-xs="column" layout-wrap>
+            <md-card flex flex-sm="200" class="fp-slide md-padding" >
+                <div  class="slide-container">
+                    <a ng-if="currentGraphIndex > 1" ng-click="$parent.currentGraphIndex = $parent.currentGraphIndex-1" class="slide-control left-control"><i class="fa fa-caret-left control-arrow"></i> </a>
+                    <div ng-if="currentGraphIndex === 1">
+                        <h4 class="text-center"> Fans Growth of the past 7 days</h4>
+                        <md-card-content class="md-padding">
+                            <nvd3 ng-if="$root.currentCelebPage.history.length > 1" options="likeGrowthChartOptions" data="likeGrowthChartData"></nvd3>
+                            <p ng-if="$root.currentCelebPage.history.length < 2">Collecting data, please come back tomorrow to see the charts.</p>
+                        </md-card-content>
+                    </div>
+
+                    <div ng-if="currentGraphIndex === 2">
+                        <h4 class="text-center">Talking About Growth of the past 7 days</h4>
+                        <md-card-content>
+                            <nvd3 ng-if="$root.currentCelebPage.history.length > 1" options="talkAboutGrowthChartOptions" data="talkAboutGrowthChartData"></nvd3>
+                            <p ng-if="$root.currentCelebPage.history.length < 2">Collecting data, please come back tomorrow to see the charts.</p>
+                        </md-card-content>
+                    </div>
+                    <a ng-if="currentGraphIndex < 2" ng-click="$parent.currentGraphIndex = $parent.currentGraphIndex+1" class="slide-control right-control"><i class="fa fa-caret-right control-arrow"></i></a>
+
+                </div>
+                <br>
+                <h5 class="text-center"><a href="" ng-click="currentGraphIndex = 1" ng-class="{'inactive': currentGraphIndex !== 1}">Fans Growth of the past 7 days </a>| <a href="" ng-click="currentGraphIndex = 2" ng-class="{'inactive': currentGraphIndex !== 2}">Talking About Trend of the past 7 days </a></h5>
+            </md-card>
+        </div>
+        <section>
+            <div layout="row" layout-xs="column" layout-wrap>
+                <div flex flex-sm="200">
+                    <md-card>
+                        <div class="card-block height-2">
+                            <div class="title"><div class="title-block"><h4>Top 5 Posts</h4></div> </div>
+                            <div class="card empty-msg-card" ng-show="$root.currentCelebPage.posts.data.length == 0">
+                                <br>
+                                <br>
+                                <br>
+                                <div class="card-block text-center">
+                                    <p>Your account analytics are being processed. Please come back to check later.</p>
+                                </div>
+                            </div>
+                            <table class="table table-striped">
+                                <thead class="item item-list-header ">
+                                <tr >
+                                    <th >Post</th>
+                                    <th >Reactions</th>
+                                    <th >Shares</th>
+                                    <th >Posted Date (PST)</th>
+                                </tr>
+                                </thead>
+                                <tbody >
+                                <tr ng-repeat="post in $root.currentCelebPage.posts.data | orderBy: '-reactions.summary.total_count'" ng-if="$index < 5">
+                                    <td >
+                                        <a target="_blank" class="" ng-href="https://www.facebook.com/{{post.id}}">
+                                            {{post.message | cut:false:30:' ...'}}</a><a ng-if="!post.message" target="_blank" ng-href="https://www.facebook.com/{{post.id}}">View Post</a>
+                                        <!--<a ng-click="showPostPreview('https://www.facebook.com/'+post.postId)"><i class="fa fa-search"></i></a> -->
+                                    </td>
+                                    <td >{{post.reactions.summary.total_count | number}}</td>
+                                    <td >{{post.shares.count | number}}</td>
+                                    <td ng-if="::post.created_time">{{post.created_time | date:'medium'}}</td>
+                                    <td ng-if="::!post.created_time">Not Available</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </md-card>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="row" ng-if="loadedCelebDetails && !$root.user">
+        <br>
+        <div  class="col-xs-12">
+            <img src="../img/mockCelebData.png" style="width:100%;"/>
+            <div class="alert alert-info centered-text text-center"><h5>Sign up with FamePick to see insights of {{$root.currentCelebPage.name}} <a href="#/signup" class="md-button md-raised md-primary">Sign Up</a></h5></div>
+        </div>
+    </div>
+    <div>
+        <div class="row">
+            <br>
+            <hr/>
+            <h4 class="col-md-6">People also looking at:</h4>
+        </div>
+        <br>
+        <div class="row">
+
+            <div ng-repeat="page in suggestedPages" class="col-md-4 col-lg-3 col-sm-6" ng-if="(page.id !== $root.currentCelebPage.id) && $index < 4">
+                <search-result-card displayed-pages="suggestedPages" page="page" keyword="{{currentSearchKeyword}}" ></search-result-card>
+            </div>
+        </div>
+    </div>
+</div>

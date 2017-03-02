@@ -1,0 +1,471 @@
+<div class="container">
+  <div >
+    <!--<div class="col-xs-3">-->
+      <!--<ul class="nav nav-pills nav-stacked">-->
+        <!--<li ng-click="selectedTab='platforms'"><a href ng-class="{'active': selectedTab=='platforms'}">Links to-->
+          <!--other platforms</a></li>-->
+        <!--<li ng-click="selectedTab='payment'"><a href ng-class="{'active': selectedTab=='payment'}">Bank-->
+          <!--account</a></li>-->
+        <!--<li ng-click="selectedTab='billing'"><a href ng-class="{'active': selectedTab=='billing'}">Billing</a>-->
+        <!--<li ng-click="selectedTab='changePassword'"><a href ng-class="{'active': selectedTab=='changePassword'}">Change-->
+          <!--Password</a>-->
+        <!--</li>-->
+      <!--</ul>-->
+    <!--</div>-->
+    <md-tabs class=" md-dynamic-height" >
+      <md-tab label="Profile">
+        <div class="md-padding">
+          <div>
+            <br>
+
+            <h2>My Profile</h2>
+            <br>
+            <md-card flex>
+              <md-card-content>
+                <h3>{{user.profile.name}}</h3>
+                <hr>
+                  <div class="form-group pull-right">
+                    <md-button class="md-primary md-raised" ng-click="openOnBoarding(true)">Edit My Profile</md-button>
+                    <a class="md-button md-accent md-raised" href="/logout">Sign Out</a>
+                  </div>
+                <h5>Email</h5>
+                <div>{{user.email}}</div>
+                <br>
+                <h5>Daily Page Rent Price</h5>
+                <div>
+                  {{user.profile.pageRent.dailyBudget | numeraljs:'$0,0.00' }}
+                  <md-button class="md-primary md-raised" ng-click="updatePageRentPrice()">Change Rent Price</md-button>
+                </div>
+                <br>
+                <div class="form-group" ng-if="user.facebook && user.profile.fbPageList.length > 0">
+                  <h5>Linked Facebook Page</h5>
+                  <span ng-repeat="page in user.profile.fbPageList">{{page.name}}<span ng-show="$index<user.profile.fbPageList.length-1">, </span></span>
+                </div>
+              </md-card-content>
+            </md-card>
+            <br>
+            <hr>
+            <br>
+            <div class="login-btn-group">
+              <h3>Link to more platforms</h3>
+              <br>
+              <div class="row">
+                <div ng-if="!user.facebook" class="col-xs-6 col-sm-6 col-md-4">
+                  <a href="/auth/facebook" class="btn btn-block btn-facebook btn-social"><i class="fa fa-facebook"></i>Sign in with Facebook</a>
+                </div>
+                <div ng-if="!user.instagram" class="col-xs-6 col-sm-6 col-md-4">
+                  <a href="/auth/instagram" class="btn btn-block btn-instagram btn-social"><i class="fa fa-instagram"></i>Sign in with Instagram</a>
+                </div>
+                <div ng-if="!user.twitter" class="col-xs-6 col-sm-6 col-md-4">
+                  <a href="/auth/twitter" class="btn btn-block btn-twitter btn-social"><i class="fa fa-twitter"></i>Sign in with Twitter</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </md-tab>
+      <md-tab label="Subscription">
+        <div class="md-padding">
+          <div>
+            <br>
+            <h2>My Subscription</h2>
+            <br>
+            <md-card md-colors="::{ background: 'amber-200'}">
+              <md-card-content>
+                <a class="md-button md-primary md-raised pull-right" href="#/pricing">Change Plan</a>
+                <h6>Current Subscription:</h6>
+                <h5><a href="#/pricing"><span ng-if="!user.profile.membership">Basic Plan</span><span ng-if="user.profile.membership === 1">Silver Plan</span><span ng-if="user.profile.membership === 2">Gold Plan</span></a></h5>
+              </md-card-content>
+            </md-card>
+
+            <md-card ng-show="cardInfo && (user.profile.membership > 0)" flex>
+              <md-card-content>
+                <form class="form-inline" ng-show="isUpdatingBilling==false">
+                  <div>
+                    <h4>Billing Info:</h4>
+                    <h4><small>{{cardInfo.brand}} XXXX XXXX XXXX {{cardInfo.number}} (exp {{cardInfo.expiry}})</small></h4>
+                    <p class="form-control-static" ng-show="!cardInfo">
+                      No credit card associated with your account.
+                    </p>
+                  </div>
+                </form>
+                <form ng-show="isUpdatingBilling==true" class="form-horizontal">
+                  <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="cardNo">Card No.</label>
+
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" ng-model="card.number" id="cardNo"
+                             placeholder="Credit card number"
+                             value="">
+                    </div>
+                  </div>
+                  <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="cvc">CVC</label>
+
+                    <div class="col-sm-2">
+                      <input class="form-control" type="text" ng-model="card.cvc" id="cvv" placeholder="CVC"
+                             value="123">
+
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-sm">
+                    <label class="col-sm-2 control-label" for="expiration">Expiration</label>
+
+                    <div class="col-sm-4">
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <select ng-model="card.exp_month" class="form-control col-sm-2" name="expMonth" id="expMonth"
+                                  ng-options="month.value as month.label for month in expiryMonths track by month.value"></select>
+                        </div>
+                        <div class="col-sm-1">/</div>
+                        <div class="col-sm-4">
+                          <select ng-model="card.exp_year" class="form-control col-sm-2" name="expYear" id="expYear"
+                                  ng-options="year as year for year in expiryYears track by year"></select>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="pull-right">
+
+                    <md-button class="md-primary md-raised" ng-click="authorizeCreditCard()"
+                               ng-disabled="updateBillingStatus == 'Processing'">{{updateBillingStatus}}
+                    </md-button>
+                    <md-button ng-disabled="updateBillingStatus == 'Processing'"
+                               class="md-accent md-raised" ng-click="isUpdatingBilling=false">Cancel
+                    </md-button>
+                  </div>
+                </form>
+              </md-card-content>
+            </md-card>
+
+            </div>
+          </div>
+        </div>
+      </md-tab>
+    </md-tabs>
+
+
+    <!--Platforms page-->
+    <div ng-show="selectedTab == 'platforms'" class="col-xs-9">
+
+      <!--<div class="create-campaign-popup">-->
+        <!--<div class="form-group pull-right">-->
+          <!--<button class="btn btn-lg btn-yellow-fill" ng-click="openOnBoarding(true)">Edit My Profile</button>-->
+          <!--<a class="btn btn-lg btn-lightgray-fill" href="/logout">Sign Out</a>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+          <!--<h4>Full Name</h4>-->
+          <!--<div>{{user.profile.name}}</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+          <!--<h4>Email</h4>-->
+          <!--<div>{{user.email}}</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" ng-if="user.facebook && user.profile.fbPageList.length > 0">-->
+          <!--<h4>Linked Facebook Page</h4>-->
+          <!--<span ng-repeat="page in user.profile.fbPageList">{{page.name}}<span ng-show="$index<user.profile.fbPageList.length-1">, </span></span>-->
+        <!--</div>-->
+        <!--<div class="clearfix"></div>-->
+      <!--</div>-->
+
+
+    <!--Billing page-->
+    <!--<div ng-show="selectedTab=='billing'" class="form-group col-lg-9 col-sm-6">-->
+      <!--<h4>My Credit cards</h4>-->
+      <!--<div class="credit-card-panel">-->
+        <!--<form class="form-inline" ng-show="isUpdatingBilling==false">-->
+          <!--<div class="col-md-12">-->
+            <!--<label for="ccNumberReadOnly">Primary Credit Card</label>-->
+
+            <!--<p class="form-control-static" ng-show="cardInfo">-->
+              <!--{{cardInfo.brand}} XXXX XXXX XXXX {{cardInfo.number}} (exp {{cardInfo.expiry}})-->
+            <!--</p>-->
+            <!--<p class="form-control-static" ng-show="!cardInfo">-->
+              <!--No credit card associated with your account.-->
+            <!--</p>-->
+            <!--<button class="btn btn-yellow-fill pull-right" ng-click="isUpdatingBilling=true">Change</button>-->
+          <!--</div>-->
+        <!--</form>-->
+        <!--<form ng-show="isUpdatingBilling==true" class="form-horizontal">-->
+          <!--<div class="form-group form-group-sm">-->
+            <!--<label class="col-sm-2 control-label" for="cardNo">Card No.</label>-->
+
+            <!--<div class="col-sm-10">-->
+              <!--<input class="form-control" type="text" ng-model="card.number" id="cardNo"-->
+                     <!--placeholder="Credit card number"-->
+                     <!--value="">-->
+            <!--</div>-->
+          <!--</div>-->
+
+          <!--<div class="form-group form-group-sm">-->
+            <!--<label class="col-sm-2 control-label" for="cvc">CVC</label>-->
+
+            <!--<div class="col-sm-2">-->
+              <!--<input class="form-control" type="text" ng-model="card.cvc" id="cvv" placeholder="CVC"-->
+                     <!--value="123">-->
+
+            <!--</div>-->
+          <!--</div>-->
+
+          <!--<div class="form-group form-group-sm">-->
+            <!--<label class="col-sm-2 control-label" for="expiration">Expiration</label>-->
+
+            <!--<div class="col-sm-4">-->
+              <!--<div class="row">-->
+                <!--<div class="col-sm-4">-->
+                  <!--<select ng-model="card.exp_month" class="form-control col-sm-2" name="expMonth" id="expMonth"-->
+                          <!--ng-options="month.value as month.label for month in expiryMonths track by month.value"></select>-->
+                <!--</div>-->
+                <!--<div class="col-sm-1">/</div>-->
+                <!--<div class="col-sm-4">-->
+                  <!--<select ng-model="card.exp_year" class="form-control col-sm-2" name="expYear" id="expYear"-->
+                          <!--ng-options="year as year for year in expiryYears track by year"></select>-->
+                <!--</div>-->
+              <!--</div>-->
+            <!--</div>-->
+
+          <!--</div>-->
+
+
+          <!--<button class="btn btn-yellow-fill pull-right" ng-click="authorizeCreditCard()"-->
+                  <!--ng-disabled="updateBillingStatus == 'Processing'">{{updateBillingStatus}}-->
+          <!--</button>-->
+          <!--<button ng-disabled="updateBillingStatus == 'Processing'"-->
+                  <!--class="btn btn-lightgray-fill pull-right" ng-click="isUpdatingBilling=false">Cancel-->
+          <!--</button>-->
+        <!--</form>-->
+      <!--</div>-->
+
+    <!--</div>-->
+
+    <!--Payment page-->
+    <div ng-show="selectedTab=='payment'" class="form-group col-lg-9 col-sm-6">
+      <h4>Bank Account</h4>
+
+      <div class="row well" ng-show="isUpdatingAccount==true">
+        <form class="form-horizontal">
+          <span class="payment-errors"></span>
+
+          <div class="form-group">
+            <label for="inputAccNo" class="col-sm-2 control-label">Account No.</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputAccNo" placeholder="Account No."
+                     ng-model="account.account_number">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputAccName" class="col-sm-2 control-label">Account Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputAccName" placeholder="Account Name"
+                     ng-model="account.account_holder_name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputAccType" class="col-sm-2 control-label">Account Type</label>
+            <div class="col-sm-10">
+              <select class="form-control" id="inputAccType" ng-model="account.account_holder_type">
+                <option value="individual">Personal</option>
+                <option value="company">Company</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="inputRouting" class="col-sm-2 control-label">Routing No</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" id="inputRouting" placeholder="Routing No"
+                     ng-model="account.routing_number">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Country</label>
+            <div class="col-sm-4">
+              <div famepick-country-select="account.country"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Currency</label>
+            <div class="col-sm-10">
+              <p class="form-control-static">{{account.currency}}</p>
+            </div>
+          </div>
+
+
+          <button class="btn btn-yellow-fill pull-right" ng-click="registerAccount()"
+                  ng-disabled="updateAccountStatus == 'Processing'">{{updateAccountStatus}}
+          </button>
+          &nbsp;
+          <button ng-disabled="updateAccountStatus == 'Processing'"
+                  class="btn btn-lightgray-fill pull-right" ng-click="isUpdatingAccount=false">Cancel
+          </button>
+        </form>
+      </div>
+
+      <div class="row" ng-show="isUpdatingAccount==false">
+        <div class="col-md-6">
+          <div class="payment-gateway-list">
+            <form>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Bank Account</label>
+                <div class="col-sm-8">
+                  <p class="form-control-static" ng-show="accountInfo">
+                    {{accountInfo.bank_name}} ****{{accountInfo.number}} ({{accountInfo.currency | uppercase}})
+                  </p>
+                  <p class="form-control-static" ng-show="!accountInfo">
+                    <em>No bank account associated with your account</em>
+                  </p>
+                </div>
+              </div>
+              <br><br>
+              <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                  <button class="btn btn-lightgray-fill"
+                          ng-click="isUpdatingAccount=true">Update Account
+                  </button>
+
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="wallet-balance" ng-show="isWithdrawing==false">
+            <div class="wallet-header">Wallet Balance</div>
+            <div class="row wallet-body">
+              <div class="col-md-6 text-center">
+                <span class="wallet-balance-amount availabe-amount">{{balance.available | currency:"$ "}}</span><br>
+                <span class="wallet-balance-label">Available</span>
+                <br/>
+                <button class="btn btn-link"
+                        ng-show="balance.available>0"
+                        ng-click="isWithdrawing=true">Withdraw
+                </button>
+              </div>
+              <div class="col-md-6 text-center">
+                <span class="wallet-balance-amount pending-amount">{{balance.pending | currency:"$ "}}</span><br>
+                <span class="wallet-balance-label">Pending</span>
+              </div>
+            </div>
+          </div>
+          <div class="wallet-balance" ng-show="isWithdrawing==true">
+            <div class="wallet-header">Wallet Withdrawal</div>
+
+            <form>
+              <div class="form-group">
+                <label class="col-sm-4 control-label">Amount</label>
+                <div class="col-sm-4">
+                  <input class="form-control" step="any" type="number" ng-model="withdrawal.amount"
+                         id="withdrawalAmount"
+                         placeholder="Enter amount" max="{{balance.available}}" min="1"
+                  >
+                </div>
+                <div class="col-md-4">
+                </div>
+              </div>
+              <br/><br/><br/>
+              <div class="form-group">
+                <div class="col-sm-4">
+                  <button class="btn btn-lightgray-fill"
+                          ng-click="isWithdrawing=false"
+                          ng-disabled="withdrawalStatus == 'Processing'">Cancel
+                  </button>
+                </div>
+                <div class="col-sm-8">
+                  <button class="btn btn-yellow-fill"
+                          ng-click="processWithdrawal()"
+                          ng-disabled="withdrawalStatus == 'Processing'">{{withdrawalStatus}}
+                  </button>
+                  <!--<button  ng-disabled="withdrawalStatus == 'Processing'"-->
+                  <!--class="btn btn-lightgray-fill pull-right" ng-click="isWithdrawing=false">Cancel</button>-->
+
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <section id="team" class="section">
+        <div class="container">
+          <div class="row">
+            <h4 class="plain-section-title">Account History</h4>
+          </div>
+          <div class="row ">
+            <div class="col-md-8">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Ref</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="transaction in transactionList | orderBy:'-timestamp'">
+                  <td>{{transaction.timestamp | date:'medium'}}</td>
+                  <td>{{transaction.description}}</td>
+                  <td>{{transaction.amount | currency:"USD "}}</td>
+                  <td>{{transaction.status}}</td>
+                  <td>{{transaction.ref}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="row ">
+            <div clas="col-md-8 text-center">
+              <!--
+              <button class="btn btn-yellow-fill">Load More</button>
+              -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!--Change Password page-->
+    <div ng-show="selectedTab=='changePassword'" class="form-group col-lg-9 col-sm-6">
+      <h4>Change Password</h4>
+      <div class="row">
+        <div class="col-md-8">
+          <form name="passwordForm" novalidate>
+            <div class="form-group">
+              <label>Old Password</label>
+              <input class="form-control" type="password" ng-model="password.oldPassword" required/>
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input class="form-control" type="password" ng-model="password.newPassword" required/>
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <input class="form-control" type="password" ng-model="confirmPassword" required
+                     ng-model-options="{ debounce: 200 }"/>
+              <div class="alert alert-warning" ng-show="confirmPassword != '' && confirmPassword != password.newPassword">
+                Passwords don't match. Please check your input.
+              </div>
+            </div>
+            <button ng-disabled="confirmPassword != password.newPassword || passwordForm.$invalid" class="btn btn-yellow-fill" ng-click="updatePassword()">Change
+              Password
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>

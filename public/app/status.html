@@ -1,0 +1,291 @@
+<div class="status-page">
+  <div class="container">
+    <h2>Status</h2>
+    <div class="inbox">
+      <div class="inbox-header">
+        <nav class="navbar navbar-inbox">
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li ng-class="{active: selectedPage === 'campaign'}"><a href="" href ng-click="switchPage('campaign')">My Campaigns</a></li>
+              <li ng-class="{active: selectedPage === 'application'}"><a href="" ng-click="switchPage('application')">My Proposals</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <div class="inbox-body row">
+
+        <div class="col-sm-4">
+
+          <div class="select-campain">
+            <div class="alert alert-warning" ng-show="!displayedCampaign">Click on a conversation to see details.</div>
+            <select class="form-control" ng-model="selectedCampaign" ng-change="selectCampaign()" ng-options="myCpn as myCpn.topic for myCpn in myCampaigns">
+              <option value="" selected>--Select a campaign--</option>
+            </select>
+          </div>
+
+          <!--show application list if a campaign is selected-->
+          <a ng-click="selectApplication(application)" ng-show="selectedPage === 'campaign' && selectedCampaign"
+             class="list-group-item"
+             ng-class="{active: selectedApplication.applicationId === application.applicationId, 'list-group-item-completed': application.status == 'completed' || application.status == 'scheduled', 'list-group-item-rejected': application.status === 'rejected'}"
+             ng-repeat="application in applicationList">
+            <div class="row">
+              <div class="col-md-3">
+                <famepick-user-info ng-if="application.userId" kind='avatar' userid='application.userId'/>
+              </div>
+              <div class="col-md-6">
+                <h4>{{selectedCampaign.topic}}</h4>
+                <h5>
+                  <famepick-user-info kind='fullname' userid='application.userId'/>
+                </h5>
+              </div>
+              <div class="col-dm-3">
+                <h6>
+                  <i ng-show="application.status === 'completed'" class="fa fa-check-circle"></i>
+                  <i ng-show="application.status === 'matching'" class="user-avatar-overlay fa fa-hand-paper-o"></i>
+                  {{statusMap[application.status]}}
+                </h6>
+              </div>
+            </div>
+          </a>
+
+          <!--show thread list if no campaign is selected-->
+          <a ng-click="selectThread(thread)" ng-show="selectedPage === 'campaign' && !selectedCampaign"
+             class="list-group-item"
+             ng-class="{active: selectedThread.threadId === thread.threadId}" ng-repeat="thread in messageThreads">
+            <div class="row">
+              <div class="col-md-3">
+                <famepick-user-info ng-if="thread.userId" kind='avatar' userid='thread.userId'/>
+              </div>
+              <div class="col-md-9">
+                <h4>{{thread.title}}</h4>
+                <h5>
+                  <famepick-user-info kind='fullname' userid='thread.userId'/>
+                </h5>
+              </div>
+            </div>
+          </a>
+
+          <!--show my proposal list if selected page is application-->
+          <a ng-click="selectApplication(application)" ng-show="selectedPage === 'application'"
+             ng-repeat="application in applicationList" class="list-group-item"
+             ng-class="{active: selectedApplication.applicationId === application.applicationId, 'list-group-item-completed': application.status == 'completed' || application.status == 'scheduled', 'list-group-item-rejected': application.status === 'rejected'}">
+            <div class="row">
+              <div class="col-md-2">
+                <famepick-user-info ng-if="application.ownerUserId" kind='avatar' userid='application.ownerUserId'/>
+              </div>
+              <div class="col-md-10">
+                <h4>{{campaignCache[application.campaignId].topic}}</h4>
+                <h5><famepick-user-info kind='fullname' userid='application.ownerUserId'/></h5>
+                <div class="pull-right">
+                  <h6>
+                    <i ng-show="application.status === 'completed'" class="fa fa-check-circle status-icon"></i>
+                    <i ng-show="application.status === 'matching'" class="user-avatar-overlay status-icon fa fa-hand-paper-o"></i>
+                    <i ng-show="application.status === 'rejected'" class="fa fa-times status-icon"></i>
+                    {{statusMap[application.status]}}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div ng-show="displayedCampaign" class="col-sm-8 details-page" style="padding: 30px 50px 30px 20px;">
+
+          <div ng-if="displayedCampaign.userId == user.id">
+            <a ng-click="findMatching(displayedCampaign)" ng-show="displayedCampaign.status == 'pending'" href class="btn btn-xs btn-yellow-fill">Find Match</a>
+            <a ng-click="openEditCampaignPopup()" ng-show="displayedCampaign.status == 'pending'" href class="btn btn-xs btn-lightgray-fill">Edit Campaign</a>
+            <a ng-click="deleteCampaign(displayedCampaign)" ng-show="displayedCampaign.status == 'pending'" href class="btn btn-xs btn-lightgray-fill">Delete Campaign</a>
+          </div>
+
+          <div class="details-header">
+            <h2 class="details-title">{{displayedCampaign.topic}}</h2>
+            <div class="details-budget">
+              <span><span class="section-title-highlight">${{displayedCampaign.budget}}</span> Budget</span>
+              <span><span class="section-title-highlight">${{displayedCampaign.payRate}}</span> Per {{displayedCampaign.payEventType}}</span>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="details-sub-header">
+            <div class="container">
+              <div class="details-author">
+                <a>
+                  <img class="img-circle" />
+                </a>
+              </div>
+              <div class="details-img">
+                <img ng-src="{{displayedCampaign.thumbnail}}" class=""/>
+              </div>
+              <div class="details-socials">
+                <img class="img-circle social-logo" src="img/FB-f-Logo__blue_512.png" data-pin-nopin="true">
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="details-content row">
+              <div class="details-requirements col-sm-4">
+                <span class="title text-left">Requirements</span>
+                <div>
+                  <span class="badge badge-violet">{{displayedCampaign.minAge}}-{{displayedCampaign.maxAge}}</span>
+                  Age
+                </div>
+                <div>
+                  <span class="badge badge-violet">{{displayedCampaign.numberOfFollowers}}</span>
+                  Min. Followers
+                </div>
+              </div>
+              <div class="details-instruction col-sm-8" >
+                <span class="title text-right">Description</span>
+                <p class="text-right">{{displayedCampaign.details}}</p>
+              </div>
+            </div>
+          </div>
+
+          <br>
+
+          <div class="container" ng-show="displayedApplication">
+
+            <!--Application section-->
+            <h3 class="title">Proposal Details</h3>
+
+            <!--Waiting for response of a wave-->
+            <div ng-if="displayedApplication.status === 'matching' && displayedCampaign.userId === user.id" class="alert alert-warning" >
+              <i class="fa fa-hand-paper-o"></i> You waved at the user. Waiting for user's response now.
+            </div>
+
+            <!--Need to response to a wave-->
+            <div ng-if="displayedApplication.status === 'matching' && displayedApplication.userId === user.id">
+              <div class="alert alert-warning">
+                <i class="fa fa-hand-paper-o"></i>
+                <strong ng-show="displayedApplication.ownerUserId!=''">
+                  <famepick-user-info kind='fullname' userid='displayedApplication.ownerUserId'/>
+                </strong>
+                <span ng-show="!displayedApplication.ownerUserId || displayedApplication.ownerUserId==''">The campaign owner </span>
+                <span>waved at you. Respond now before other users do.</span>
+                <a ng-click="openEditApplication()" href class="btn btn-yellow-fill">Respond</a>
+              </div>
+            </div>
+
+            <div ng-if="displayedApplication.status !== 'matching' ">
+              <div class="alert alert-warning" ng-show="displayedCampaign.userId === user.id && displayedApplication.status=='pending'">
+                Click to schedule the post on the user's facebook if it looks ok, or chat with the user what you want to change.
+                It will complete and close the campaign.
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="fb-post-panel panel panel-info ">
+                    <div class="panel-heading">
+                      <h4 class="header-text">
+                        <div ng-show="displayedApplication.platform == 'facebook'" class="small-icon fb-logo"></div>
+                        <div ng-show="displayedApplication.platform == 'twitter'" class="small-icon twitter-logo"></div>
+                        Post Content
+                      </h4>
+                    </div>
+                    <div class="panel-body">
+                      <p>{{displayedApplication.postContent}}</p>
+                      <img ng-if="displayedApplication.imgUrl && displayedApplication.imgUrl != ''"
+                           ng-src="{{displayedApplication.imgUrl}}" class="in-form-img img-responsive"/>
+                    </div>
+                  </div>
+                  <!--<div class="form-group">-->
+                  <!--<label>Content to Post</label>-->
+                  <!--<div>{{displayedApplication.postContent}}</div>-->
+                  <!--<img class="img-responsive" ng-src="{{displayedApplication.imgUrl}}"/>-->
+                  <!--</div>-->
+                </div>
+                <div class="col-md-6">
+
+                  <div ng-if="displayedApplication.message">
+                    <h5>Qualification</h5>
+                    <div>{{displayedApplication.message}}</div>
+                  </div>
+
+                  <a class="row" ng-href="#/userDetails?userId={{displayedApplication.userId}}&pageId={{displayedApplication.facebookPageId}}" target="_blank">
+                    <span class="col-sm-3">
+                      <famepick-user-info ng-if="displayedApplication.userId" kind='avatar' userid='displayedApplication.userId'/>
+                    </span>
+                    <span class="col-sm-9" ng-show="displayedApplication.userId!=''">
+                      <famepick-user-info kind='fullname' userid='displayedApplication.userId'/>
+                    </span>
+                  </a>
+
+                  <br>
+                  <div>
+                    <h5>Time to Post</h5>
+                    <span>{{displayedApplication.actionTime | date:'medium'}}</span>
+                  </div>
+
+                  <br>
+                  <div>
+                    <h5>Page to Post</h5>
+                    <a ng-show="displayedApplication.platform == 'facebook'" class="btn btn-block btn-facebook" ng-href="http://facebook.com/{{displayedApplication.facebookPageId}}" target="_blank">
+                      View Page <i class="fa fa-facebook"></i>
+                    </a>
+                  </div>
+
+
+                  <a class="btn btn-block btn-yellow-fill"
+                     ng-show="displayedApplication.status=='pending' && displayedApplication.userId == user.id"
+                     ng-click="openEditApplication(displayedApplication)">
+                    Edit Proposal
+                  </a>
+
+                  <a class="btn btn-facebook btn-block btn-social"
+                     ng-show="displayedApplication.status=='pending' && displayedApplication.ownerUserId == user.id && displayedApplication.platform == 'facebook'"
+                     ng-click="ownerSchedulePaidPost(displayedApplication)">
+                    <i class="fa fa-facebook"></i>
+                    Schedule to post on Facebook
+                  </a>
+                  <a class="btn btn-twitter btn-block btn-social"
+                     ng-show="displayedApplication.status=='pending' && displayedApplication.ownerUserId == user.id && displayedApplication.platform == 'twitter'"
+                     ng-click="ownerSchedulePaidPost(displayedApplication)">
+                    <i class="fa fa-twitter"></i>
+                    Schedule to post on Twitter
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container" ng-show="displayedApplication">
+            <!--chat section-->
+            <div id="messageList" class="message-list">
+              <div class="message-body">
+                <div class="message-item" ng-repeat="message in threadMessages">
+                  <div class="row" ng-if="message.userId !== user.id">
+                    <div class="col-sm-3">
+                      <famepick-user-info ng-if="message.userId" kind='avatar' userid='message.userId'/>
+                    </div>
+                    <div class="col-sm-9">
+                      <div class="bubble you">
+                        {{message.text}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" ng-if="message.userId === user.id">
+                    <div class="col-sm-9">
+                      <div class="bubble me">
+                        {{message.text}}
+                      </div>
+                    </div>
+                    <div class="col-sm-1">
+                      <famepick-user-info ng-if="message.userId" kind='avatar' userid='message.userId'/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <form class="row panel-footer">
+                <div class="col-xs-10">
+                  <input type="text" class="form-control input-lg" id="inputMessage" ng-model="messageToSend" placeholder="Type your message">
+                </div>
+                <div class="col-xs-2">
+                  <button ng-click="sendMessage()" class="btn btn-yellow-fill">Send
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+  </div>
+</div>

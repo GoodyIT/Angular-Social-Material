@@ -1,0 +1,184 @@
+<div ng-controller="createCampaignCtrl">
+    <h3 class="page-header">Post a Campaign Request&nbsp;
+        <div class="btn-group">
+            <label class="btn btn-primary" ng-model="campaign.type" uib-btn-radio="'trade'" uncheckable>Trade Post</label>
+            <label class="btn btn-primary" ng-model="campaign.type" uib-btn-radio="'pay'" uncheckable>Paid Campaign</label>
+        </div>
+    </h3>
+        <div class="container">
+            <div class="row">
+                <form role="form">
+                    <div ng-show="campaign.type === 'trade'" class="col-lg-6">
+                        <div class="form-group">
+                            <label for="titleInput">Title</label>
+                            <div class="input-group col-lg-10">
+                                <input type="text" ng-model="campaign.topic" class="form-control input" name="titleInput" id="titleInput" placeholder="Enter a title for your campaign" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="followersNumInput">Number of followers required</label>
+                            <div class="input-group col-lg-6">
+                                <input type="number" ng-model="campaign.numberOfFollowers" class="form-control" id="followersNumInput" name="followersNumInput" placeholder="Enter a number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ageRangeInput">Age Range</label>
+                            <div id="ageRangeInput" class="row">
+                                <div class="col-lg-5">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">From</span>
+                                        <input type="number" ng-model="campaign.minAge" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">To</span>
+                                        <input type="number" class="form-control" ng-model="campaign.maxAge">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumbnailInput">Thumbnail URL</label>
+                            <div class="input-group col-lg-10">
+                                <div class="btn-group">
+                                    <label class="btn btn-success" ng-model="imageType" uib-btn-radio="'url'" uncheckable>Enter image URL</label>
+                                    <label class="btn btn-success" ng-model="imageType" uib-btn-radio="'file'" uncheckable>Upload an image</label>
+                                </div>
+                                <div ng-show="imageType == 'url'" heading="Enter thumbnail URL">
+                                    <br><input type="text" ng-model="campaign.thumbnail" class="form-control input" name="thumbnailInput" id="thumbnailInput" placeholder="Enter a thumbnail URL" >
+
+                                </div>
+                                <div ng-show="imageType == 'file'" heading="Upload an thumbnail">
+                                    <br><input name="file" type="file" file />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="descInput">Campaign Description</label>
+                            <div class="input-group col-lg-10">
+                                <textarea name="descInput" id="descInput" class="form-control" rows="5" ng-model="campaign.details"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-show="campaign.type === 'pay'" class="col-lg-6">
+                        <div class="form-group">
+                            <label for="titleInput">Title</label>
+                            <div class="input-group col-lg-10">
+                                <input type="text" ng-model="campaign.topic" class="form-control input" name="titleInput" id="titleInput" placeholder="Enter a title for your campaign" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="descInput">Campaign Description</label>
+                            <div class="input-group col-lg-10">
+                                <textarea name="descInput" id="descInput" class="form-control" rows="5" ng-model="campaign.details"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="followersNumInput">Number of followers required</label>
+                            <div class="input-group col-lg-6">
+                                <input type="number" ng-model="campaign.numberOfFollowers" class="form-control" id="followersNumInput" name="followersNumInput" placeholder="Enter a number" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label >Budget ($0.05 @click, $2 @install, $0.015 @view)</label>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="input-group">
+                                        <input type="number" ng-model="campaign.budget" class="form-control" id="budgeInput" name="budgeInput" placeholder="Enter a budget you will pay" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="input-group">
+                                        USD
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile App Store URL</label>
+                            <div class="input-group col-lg-10">
+                                <input type="text" ng-model="campaign.trackingUrl" class="form-control input" type="url" id="titleInput" placeholder="Enter the URL for the influencers to include in their posts" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="thumbnailInput">Thumbnail URL</label>
+                            <div class="input-group col-lg-10">
+                                <div class="btn-group">
+                                    <label class="btn btn-success" ng-model="imageType" uib-btn-radio="'url'" uncheckable>Enter image URL</label>
+                                    <label class="btn btn-success" ng-model="imageType" uib-btn-radio="'file'" uncheckable>Upload an image</label>
+                                </div>
+                                <div ng-show="imageType == 'url'" heading="Enter thumbnail URL">
+                                    <br><input type="text" ng-model="campaign.thumbnail" class="form-control input" name="thumbnailInput" id="thumbnailInput" placeholder="Enter a thumbnail URL" >
+
+                                </div>
+                                <div ng-show="imageType == 'file'" heading="Upload an thumbnail">
+                                    <br><input name="file" type="file" file />
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label>Available time:</label>-->
+                            <!--<div class="row">-->
+                                <!--<div class="col-md-5">-->
+                                <!--<p class="input-group">-->
+                                    <!--<span class="input-group-addon">From</span>-->
+                                    <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-init="apply.isFromCalendarOpened=false" ng-model="campaign.fromDate" ng-init="campaign.fromDate=''" is-open="apply.isFromCalendarOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" ng-required="true"  alt-input-formats="altInputFormats" />-->
+                                    <!--<span class="input-group-btn">-->
+                                        <!--<button type="button" class="btn btn-default" ng-click="apply.isFromCalendarOpened = !apply.isFromCalendarOpened"><i class="glyphicon glyphicon-calendar"></i></button>-->
+                                    <!--</span>-->
+                                <!--</p>-->
+                                <!--</div>-->
+                                <!--<div class="col-md-5">-->
+                                    <!--<p class="input-group">-->
+                                        <!--<span class="input-group-addon">To:</span>-->
+                                        <!--<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-init="apply.isToCalendarOpened=false" ng-model="campaign.toDate" ng-init="campaign.toDate=''" is-open="apply.isToCalendarOpened" min-date="minDate" max-date="maxDate" datepicker-options="dateOptions" ng-required="true"  alt-input-formats="altInputFormats" />-->
+                                    <!--<span class="input-group-btn">-->
+                                        <!--<button type="button" class="btn btn-default" ng-click="apply.isToCalendarOpened = !apply.isToCalendarOpened"><i class="glyphicon glyphicon-calendar"></i></button>-->
+                                    <!--</span>-->
+                                    <!--</p>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                        <div class="form-group">
+                            <label>Age Range (Optional)</label>
+                            <div class="btn-group input-group col-lg-12">
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'13-17'" uncheckable>13-17</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'18-24'" uncheckable>18-24</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'25-34'" uncheckable>25-34</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'35-44'" uncheckable>35-44</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'45-54'" uncheckable>45-54</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'55-64'" uncheckable>55-64</label>
+                                <label class="btn btn-default" ng-model="campaign.ageRange" uib-btn-radio="'65+'" uncheckable>65+</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Audience Gender (Optional)</label>
+                            <div class="btn-group input-group col-lg-5">
+                                <label class="btn btn-default" ng-model="campaign.gender" uib-btn-radio="'female'" uncheckable>Female</label>
+                                <label class="btn btn-default" ng-model="campaign.gender" uib-btn-radio="'male'" uncheckable>Male</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="titleInput">Location</label>
+                            <div class="input-group col-lg-10">
+                                <div country-select="campaign.location"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="titleInput">Categories (Press Enter to create a category)</label>
+                            <div class="input-group col-lg-10">
+                                <tags-input ng-model="campaign.categories"></tags-input>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <div class="form-action col-lg-6">
+        <button class="btn btn-primary" type="button" ng-disabled="savingCampaign" ng-click="ok()">Submit</button>
+        <a href="#/campaign" class="btn btn-warning" >Cancel</a>
+    </div>
+
+</div>

@@ -1,0 +1,21 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Wave to Influencer</h3>
+    </div>
+    <div class="modal-body">
+        <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+        <div class="form">
+            <div class="form-group">
+                <label><h4>Choose a campaign to wave at the user</h4></label>
+                <select class="form-control input-lg " ng-model="selectedCampaign" ng-options="campaign as campaign.topic for campaign in campaignList"></select>
+            </div>
+        </div>
+        <div class="form-group modal-footer">
+            <div class="col-md-12 text-center">
+                <button ng-show="!redirection" class="btn btn-black-fill" type="button" ng-click="close()">Close</button>
+                <button class="btn btn-yellow-fill" ng-click="selectMatch()">Wave</button>
+            </div>
+        </div>
+    </div>
+</div>

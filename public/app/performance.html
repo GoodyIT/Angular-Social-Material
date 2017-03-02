@@ -1,0 +1,446 @@
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+
+                <uib-tabset>
+                    <uib-tab select="clearSelected()" heading="My Campaigns">
+                        <br>
+
+                        <p ng-show="!loading && completedCampaigns.length < 1" class="empty-content-message">
+                            You don't have any tracked Facebook Posts.
+                        </p>
+
+                        <div ng-show="loading" class="cssload-container">
+                            <div class="large- cssload-double-torus"></div>
+                        </div>
+                        <div ng-repeat="campaign in completedCampaigns"
+                             class="col-md-6 bootcards-cards card-placeholder">
+                            <div class=" bootcards-media fp-media-card fp-request-card">
+
+                                <div class="panel panel-default deco-col">
+                                    <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                                    <div class="panel-heading text-center">
+                                        <div class="card-description">
+                                            <h3>{{campaign.topic}}</h3>
+
+                                            <div class="card-description-content">
+                                                {{campaign.details}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <img ng-src="{{campaign.thumbnail}}"
+                                         class="img-responsive card-thumbnail"/>
+
+                                    <div class="panel-body">
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <strong>REQUIREMENTS</strong><br/>
+                                                <strong>AGE</strong>: {{campaign.minAge}}-{{campaign.maxAge}}<br/>
+                                                <strong>FOLLOWERS</strong>: {{campaign.numberOfFollowers}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <button
+                                                        ng-click="getPostStats(campaign)"
+                                                        class="btn btn-lightgray-fill">View Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </uib-tab>
+
+                    <uib-tab select="getMyApplications()" heading="Requested Trades">
+                        <br>
+
+                        <p ng-show="appliedCampaigns.length < 1 && completedApplicationsWithoutCampaign.length <1"
+                           class="empty-content-message">
+                            You don't have any tracked Facebook Posts.
+                        </p>
+
+                        <div ng-repeat="campaign in appliedCampaigns"
+                             class="col-md-6 bootcards-cards card-placeholder">
+                            <div class=" bootcards-media fp-media-card fp-request-card">
+
+                                <div class="panel panel-default deco-col">
+                                    <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                                    <div class="panel-heading text-center">
+                                        <div class="card-description">
+                                            <h3>{{campaign.topic}}</h3>
+
+                                            <div class="card-description-content">
+                                                {{campaign.details}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <img ng-src="{{campaign.thumbnail}}"
+                                         class="img-responsive card-thumbnail"/>
+
+                                    <div class="panel-body">
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <strong>REQUIREMENTS</strong><br/>
+                                                <strong>AGE</strong>: {{campaign.minAge}}-{{campaign.maxAge}}<br/>
+                                                <strong>FOLLOWERS</strong>: {{campaign.numberOfFollowers}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <button
+                                                        ng-click="getApplicationPostStatus(campaign)"
+                                                        class="btn btn-lightgray-fill">View Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-repeat="campaign in completedApplicationsWithoutCampaign"
+                             class="col-md-6 bootcards-cards card-placeholder">
+                            <div class=" bootcards-media fp-media-card fp-request-card">
+
+                                <div class="panel panel-default deco-col">
+                                    <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                                    <div class="panel-heading text-center">
+                                        <div class="card-description">
+                                            <h3>My requirements in the trade:</h3>
+
+                                            <div class="card-description-content">
+                                                {{campaign.completedApplications[0].requirements}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-footer">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <button ng-click="getApplicationPostStatus(campaign)"
+                                                        class="btn btn-lightgray-fill">View Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+
+                    <uib-tab select="getPaidApplications()" heading="Paid Campaigns">
+                        <br>
+
+                        <p ng-show="paidApplications.length < 1 " class="empty-content-message">
+                            You don't have any tracked paid campaigns.
+                        </p>
+
+                        <div ng-click="getPostStats(campaign)" ng-repeat="campaign in paidApplications"
+                             class="col-md-6 bootcards-cards card-placeholder">
+                            <div class=" bootcards-media fp-media-card fp-request-card">
+
+                                <div class="panel panel-default deco-col">
+                                    <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                                    <div class="panel-heading text-center">
+                                        <div class="card-description">
+                                            <h3>{{campaign.topic}}</h3>
+
+                                            <div class="card-description-content">
+                                                {{campaign.details}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <img ng-src="{{campaign.thumbnail}}"
+                                         class="img-responsive card-thumbnail"/>
+
+                                    <div class="panel-body">
+                                        <div class="row">
+
+                                            <div class="col-md-12">
+                                                <strong>REQUIREMENTS</strong><br/>
+                                                <strong>AGE</strong>: {{campaign.minAge}}-{{campaign.maxAge}}<br/>
+                                                <strong>FOLLOWERS</strong>: {{campaign.numberOfFollowers}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-footer">
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <button
+                                                        ng-click="getPostStats(campaign)"
+                                                        class="btn btn-lightgray-fill">View Details
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+
+            </div>
+            <div class="col-md-6 deco-col headered- performance-card "
+                 ng-repeat="apply in selectedCampaign.completedApplications">
+                <p ng-show="!selectedCampaign.completedApplications || selectedCampaign.completedApplications.length < 1"
+                   class="empty-content-message">
+                    Click on a campaign to see posts.
+                </p>
+
+                <div ng-show="selectedCampaign.completedApplications.length > 0" class="col-md-12 header">
+                    <div class="col-md-9">
+                        <div class="col-md-12">
+                            <h4>{{selectedCampaign.topic}}</h4>
+
+                            <p>{{selectedCampaign.details}}</p>
+                            <span class="pull-left" ng-show="selectedCampaign.type == 'pay'"> <h5>Tracking
+                                Url:&nbsp;</h5></span>
+                            <span class="pull-left" ng-show="selectedCampaign.type == 'pay'"><a
+                                    ng-href="{{selectedCampaign.trackingUrl}}" target="_blank"><h5>&nbsp;Original
+                                Link</h5></a></span>
+                            <span class="pull-left" ng-show="selectedCampaign.type == 'pay'"> <h5>Paying
+                                Rate:&nbsp;</h5></span>
+                            <span class="pull-left" ng-show="selectedCampaign.type == 'pay'"><h5
+                                    ng-if="selectedCampaign.payRate">&nbsp;{{selectedCampaign.payRate}}</h5><h5
+                                    ng-if="!selectedCampaign.payRate">&nbsp;0.05</h5></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3" ng-show="selectedCampaign.type == 'pay'">
+                        <div class="donut-chart-container text-center">
+                            <div class="donut-chart-label">
+                                <h3 class="quantity-text">${{apply.totalPaying| number:2}}</h3>
+                                <h6 class="unit-text">{{Math.round((selectedCampaign.budget -
+                                    apply.totalPaying)/selectedCampaign.budget)*100}}% from target</h6>
+                            </div>
+                            <nvd3 options="chartOptions"
+                                  data="apply.chartData"></nvd3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+
+                    <div class="fb-post-panel panel panel-info">
+                        <div class="panel-heading">
+                            <!-- Facebook -->
+                            <a      ng-if="apply.stats.type=='facebook'"
+                                    ng-href="http://facebook.com/{{apply.facebookPostId}}"
+                                                      target="_blank"
+                                                      class="pull-right"><i class="fa fa-external-link"></i>&nbsp;View
+                            post</a>
+                            <!-- Twitter -->
+                            <a ng-if="apply.stats.type=='twitter'"
+                                    ng-href="https://twitter.com/{{apply.twitterId}}/status/{{apply.tweetId}}"
+                                    target="_blank"
+                                    class="pull-right"><i class="fa fa-external-link"></i>&nbsp;View tweet</a>
+
+                            <h4 class="header-text">
+                                <div ng-if="apply.stats.type=='facebook'" class="small-icon fb-logo"></div>
+                                <div ng-if="apply.stats.type=='twitter'" class="small-icon twitter-logo"></div>
+                                &nbsp;Post Content
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <p>{{apply.postContent}}</p>
+                            <img ng-if="app.imgUrl && app.imgUrl != ''" ng-src="{{apply.imgUrl}}"
+                                 class="in-form-img img-responsive"/>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12">
+                    <!-- Installs -->
+                    <div class="info-block-container"
+                         ng-if="selectedCampaign.payEventType == 'install'"
+                         ng-class="selectedCampaign.type == 'pay'?'col-md-3':'col-md-4'">
+                        <div class="info-block">
+                            <div class="header">
+                                <span class="pull-left"><h4>Installs</h4></span>
+                                <span class="pull-right"><i class="fa fa-download" aria-hidden="true"></i></span>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <h2>{{apply.installCount}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Likes -->
+                    <div class="info-block-container" ng-class="selectedCampaign.type == 'pay'?'col-md-3':'col-md-4'">
+                        <div class="info-block">
+                            <div class="header">
+                                <span class="pull-left"><h4>Likes</h4></span>
+                                <span class="pull-right"><i class="fa fa-thumbs-o-up"></i></span>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <div ng-show="!apply.statsLoaded" class="cssload-container">
+                                    <div class="cssload-double-torus"></div>
+                                </div>
+                                <h2>{{apply.stats.likes}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Comments -->
+                    <div class="info-block-container"
+                         ng-if="apply.stats.hasComment && selectedCampaign.payEventType != 'install'"
+                         ng-class="selectedCampaign.type == 'pay'?'col-md-3':'col-md-4'">
+                        <div class="info-block">
+                            <div class="header">
+                                <span class="pull-left"><h4>Comments</h4></span>
+                                <span class="pull-right"><i class="fa fa-commenting-o"></i></span>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <div ng-show="!apply.statsLoaded" class="cssload-container">
+                                    <div class="cssload-double-torus"></div>
+                                </div>
+                                <h2>{{apply.stats.comments}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Shares -->
+                    <div class="info-block-container" ng-class="selectedCampaign.type == 'pay'?'col-md-3':'col-md-4'">
+                        <div class="info-block">
+                            <div class="header">
+                                <span class="pull-left"><h4>Shares</h4></span>
+                                <span class="pull-right"><i class="fa fa-share-square-o"></i></span>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <div ng-show="!apply.statsLoaded" class="cssload-container">
+                                    <div class="cssload-double-torus"></div>
+                                </div>
+                                <h2>{{apply.stats.shares}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Clicks -->
+                    <div class="col-md-3 info-block-container" ng-if="selectedCampaign.type == 'pay'">
+                        <div class="info-block">
+                            <div class="header">
+                                <span class="pull-left"><h4>Total Clicks</h4></span>
+                                <span class="pull-right"><i class="fa fa-mouse-pointer"></i></span>
+                            </div>
+                            <div class="col-md-12 text-center">
+                                <h2 ng-show="apply.campaignPerformance.count">{{apply.campaignPerformance.count}}</h2>
+
+                                <h2 ng-show="!apply.campaignPerformance.count">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+            </div>
+        </div>
+</section>
+
+<!--<div class="performancePage">-->
+<!--<h3>Performance</h3>-->
+
+<!--<div class="col-sm-6">-->
+<!--<uib-tabset>-->
+<!--<uib-tab select="clearSelected()" heading="My Campaigns">-->
+<!--<br>-->
+
+<!--<p ng-show="!loading && completedCampaigns.length < 1" class="alert alert-info">-->
+<!--You don't have any tracked Facebook Posts.-->
+<!--</p>-->
+
+<!--<div ng-show="loading" class="cssload-container">-->
+<!--<div class="large- cssload-double-torus"></div>-->
+<!--</div>-->
+<!--<div ng-click="getPostStats(campaign)" ng-repeat="campaign in completedCampaigns"-->
+<!--class="campaign-item col-sm-6">-->
+<!--<div class="thumbnail">-->
+<!--<div class="caption">-->
+<!--<h4 class="media-heading">{{campaign.topic}}</h4>-->
+<!--<a href>-->
+<!--<img class="media-object profile-pic" ng-src="{{campaign.thumbnail}}"-->
+<!--alt="{{campaign.user.userId}}"/>-->
+<!--</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</uib-tab>-->
+
+<!--&lt;!&ndash;2nd tab&ndash;&gt;-->
+<!--<uib-tab select="getMyApplications()" heading="Requested Trades">-->
+<!--<br>-->
+
+<!--<p ng-show="appliedCampaigns.length < 1 && completedApplicationsWithoutCampaign.length <1"-->
+<!--class="alert alert-info">-->
+<!--You don't have any tracked Facebook Posts.-->
+<!--</p>-->
+
+<!--<div ng-click="getApplicationPostStatus(campaign)" ng-repeat="campaign in appliedCampaigns"-->
+<!--class="campaign-item col-sm-6">-->
+<!--<div class="thumbnail">-->
+<!--<div class="caption">-->
+<!--<h4 class="media-heading">{{campaign.topic}}</h4>-->
+<!--<a href>-->
+<!--<img class="media-object profile-pic" ng-src="{{campaign.thumbnail}}"-->
+<!--alt="{{campaign.user.userId}}"/>-->
+<!--</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--<div ng-click="getApplicationPostStatus(campaign)"-->
+<!--ng-repeat="campaign in completedApplicationsWithoutCampaign" class="campaign-item col-sm-6">-->
+<!--<div class="thumbnail">-->
+<!--<div class="caption">-->
+<!--<h4 class="media-heading">Your Requirements in the trade:</h4>-->
+
+<!--<p class="well">{{campaign.completedApplications[0].requirements}}</p>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</uib-tab>-->
+
+<!--<uib-tab select="getPaidApplications()" heading="Paid Campaigns">-->
+<!--<br>-->
+
+<!--<p ng-show="paidApplications.length < 1 " class="alert alert-info">-->
+<!--You don't have any tracked paid campaigns.-->
+<!--</p>-->
+
+<!--<div ng-click="getPostStats(campaign)" ng-repeat="campaign in paidApplications"-->
+<!--class="campaign-item col-sm-6">-->
+<!--<div class="thumbnail">-->
+<!--<div class="caption">-->
+<!--<h4 class="media-heading">{{campaign.topic}}</h4>-->
+<!--<a href>-->
+<!--<img class="media-object profile-pic" ng-src="{{campaign.thumbnail}}"-->
+<!--alt="{{campaign.user.userId}}"/>-->
+<!--</a>-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
+<!--</uib-tab>-->
+<!--</uib-tabset>-->
+<!--</div>-->
+
+<!--<div class="col-sm-6 vertical-secondary-col">-->
+
+<!--</div>-->
+<!--</div>-->

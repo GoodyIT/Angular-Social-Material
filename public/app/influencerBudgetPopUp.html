@@ -1,0 +1,59 @@
+<div class="create-campaign-popup">
+  <div class="modal-header">
+    <h3 class="modal-title">Complete your profile!</h3>
+  </div>
+  <div class="modal-body">
+    <div>
+      <div>
+          <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+
+          <!-- Checkbox: Page Category Selection (Up to 4 selections) -->
+          <div class="form-group bordered-group">
+            <label class="margin-top-0">Please select at least 2 page categories.</label>
+            <br>
+            <br>
+                <div class="row">
+                    <span style='white-space:nowrap;' class="col-md-4" ng-repeat="cat in categories track by $index">
+                        <md-checkbox
+                              aria-label="{{cat.label}}"
+                              ng-model="categoriesModel[$index]"/>
+                          {{cat.label}}
+                    </span>
+                </div>
+
+            </div>
+              <div class="col-md-12" ng-show="filter.filterCategory.length<4">
+                <uib-alert type="warning" close="closeAlert($index)">You must select more than 2 categories.</uib-alert>
+              </div>
+          </div>
+
+          <br>
+
+          <label>Price per Day ($25.00 - $1,000.00 allowed)</label>
+          <md-input-container class="md-block margin-0">
+            <input ng-model="data.dailyBudget" type="text" name="dailyBudget" style="text-align:right;"/>
+          </md-input-container>
+          <br>
+
+          <label>Preferred Campaign Length (Days)</label>
+
+          <md-select placeholder="Assign to user" ng-model="data.preferredDays" style="min-width: 200px; max-width: 250px">
+                <md-option ng-value="day" ng-repeat="day in preferredDaysList">{{day}}</md-option>
+          </md-select>
+            <!-- <md-input-container class="md-block" style = "margin-left: -20px;"> -->
+          
+          <br>
+          <label>Campaign Start Date</label>  
+          <md-datepicker style = "margin-left: -20px;"
+                      ng-model="data.preferredStartDate"
+                      class="full-width"
+                      md-placeholder="When would you like to start a campaign?" required></md-datepicker>
+                      </md-input-container>
+      </div>
+  </div>
+</div>
+
+  <div class="modal-footer">
+    <button class="card-button btn btn-blue" ng-disabled="user.profile.name == ''||user.email == '' || !user.email" ng-click="submitForm()">Submit</button>
+  </div>
+</div>

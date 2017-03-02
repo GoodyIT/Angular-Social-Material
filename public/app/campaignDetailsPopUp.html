@@ -1,0 +1,40 @@
+<div class="details-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="description">
+                    <strong>CAMPAIGN DETAILS</strong><br/>
+
+                    <div class="description-content">
+                        {{description}}
+                    </div>
+                </div>
+
+                <div class="requirements">
+                    <strong>REQUIREMENTS</strong><br/>
+                    <strong>AGE</strong>: {{minAge}}-{{maxAge}}<br/>
+                    <strong>FOLLOWERS</strong>: {{numberOfFollowers}}
+                </div>
+
+                <div class="text-center owner-detail">
+                    <span>
+                        <famepick-user-info kind='avatar' userid='userId'/>
+                    </span>
+                    <span>
+                        <famepick-user-info kind='fullname' userid='userId'/>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <img ng-src="{{thumbnail}}" class="popup-thumbnail img-responsive"/>
+
+                <a ng-href="#/campaignDetails?id={{campaignId}}" class="btn btn-black-fill">Apply Campaign</a>
+                <button ng-click="close()" class="btn btn-yellow">Go Back</button>
+            </div>
+        </div>
+    </div>
+</div>

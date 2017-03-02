@@ -1,0 +1,93 @@
+<div class="campaign-page" ng-controller="campaignCtrl">
+
+    <section>
+        <div class="container">
+            <!-- <h4 class="section-title"><span class="section-title-highlight">Featured</span> Result</h4>-->
+            <h4 class="plain-section-title pull-left">Campaign Requests &nbsp&nbsp / &nbsp&nbsp <a href="#">Newest</a> &nbsp&nbsp / &nbsp&nbsp<a href="#">Popular</a></h4>
+            <a class="btn btn-lightgray-fill pull-right" ng-click="toggleSearch()">Search filters</a>
+            <button ng-click="showCreateCampaignPopup()" id="create-campaign-button" class="btn btn-yellow-fill pull-right" style="margin-right: 10px;">Post Your Campaign</button>
+        </div>
+        <!-- Filters -->
+        <div class="container">
+            <div class=" search-bar" ng-show="showSearchCriteria">
+                <div class="form form-inline">
+                    <div class="form-group">
+                        <input type="text" class="form-control input-group-input" placeholder="Search for campaigns...">
+                    </div>
+                    <div class="form-group">
+                        <label>Age Range</label>
+                        <input type="text" ng-model="search.ageRange" class="form-control" placeholder="Enter age range (e.g. 20-40)">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Followers</label>
+                        <input type="text" ng-model="search.numberOfFollowers" class="form-control"  placeholder="Enter age range (e.g. 20-40)">
+                    </div>
+                    <div class="form-group">
+                        <i class="fa fa-picture-o fa-2x"></i>
+                        <i class="fa fa-video-camera fa-2x"></i>
+                    </div>
+                    <div class="form-group pull-right">
+                        <button class="btn btn-lightgray-fill" type="button" ng-click="getCampaigns()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="team" class="section">
+        <div class="container">
+            <div class="row">
+                <!-- Repeating -->
+                <div ng-repeat="campaign in campaigns" class="col-md-3 bootcards-cards card-placeholder">
+                    <div class=" bootcards-media fp-media-card fp-request-card">
+                        <div ng-if="campaign.payRate" class="corner-badge-wrapper"><div class="corner-badge">${{campaign.payRate*0.7 | number:2}} @{{campaign.payEventType}}</div> </div>
+                        <div class="panel panel-default deco-col">
+                            <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                            <div class="panel-heading text-center">
+                                <div class="card-description">
+                                    <h3>{{campaign.topic}}</h3>
+
+                                    <div class="card-description-content">
+                                        {{campaign.details}}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <img ng-src="{{campaign.thumbnail}}"
+                                 class="card-thumbnail img-responsive"/>
+
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <famepick-user-info kind='avatar' userid='campaign.userId'>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <strong>REQUIREMENTS</strong><br/>
+                                        <strong>AGE</strong>: {{campaign.minAge}}-{{campaign.maxAge}}<br/>
+                                        <strong>FOLLOWERS</strong>: {{campaign.numberOfFollowers}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">
+                                <!--<a href="#/campaignDetails?id={{campaign.campaignId}}" class="card-button btn btn-lightgray-fill">View Details</a> -->
+                                <a href="#/campaignDetails?id={{campaign.campaignId}}&showForm=true" class="card-button btn btn-yellow-fill">
+                                    View Details
+                                </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row text-center">
+                <div clas="col-md-12">
+                    <button class="btn btn-yellow-fill">Load More</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>

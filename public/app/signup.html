@@ -1,0 +1,61 @@
+<div class="container">
+    <a ng-href="#/search?keyword={{currentSearchKeyword}}"><h5><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back to Search</h5></a>
+    <br>
+    <div class="page-title">
+        <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+        <h2 class="pull-left">SIGN UP</h2>
+    </div>
+    <p >Sign up with Famepick to access more features.</p>
+    <div class="row">
+        <div class="col-md-6">
+            <form id="signup-form" method="POST" class="form-horizontal" name="signupForm" novalidate>
+                <div class="col-md-10">
+                    <md-card flex>
+                        <md-card-content>
+                            <br>
+                            <h4 class="text-center" md-colors="::{ background: 'white', color: 'primary' }">Get Started Now</h4>
+                            <div class="md-padding">
+                                <md-input-container class="md-block margin-bottom-0">
+                                    <input type="text" ng-model="account.profile.name" required placeholder="Full Name" >
+                                </md-input-container>
+                                <md-input-container class="md-block margin-0">
+                                    <input type="text" ng-model="account.email" required placeholder="Email">
+                                </md-input-container>
+                                <md-input-container class="md-block margin-top-0">
+                                    <input ng-model="account.password" type="password" name="password" id="password" placeholder="Password" required/>
+                                </md-input-container>
+                                <md-button ng-click="submit()" type="submit" class="md-primary md-raised full-width margin-0" ng-disabled="signupForm.$invalid">Sign up</md-button>
+                                <br>
+                                <br>
+                                <div class="text-center">
+                                    <hr class="on-line-text-line">
+                                    <div class="on-line-text -white-bg">or</div>
+                                    <br>
+                                    <button type="button" ng-click="loginToFacebook()" class="btn btn-block btn-facebook btn-social">
+                                        <i class="fa fa-facebook"></i>Sign up with Facebook</button>
+                                </div>
+
+                                <div class="form-group text-center">
+                                    <br>
+                                    <p>Already have an account? <a href="#/login">Login</a></p>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </form>
+
+
+        </div>
+        <div class="col-md-6">
+            <h3>&nbsp;&nbsp;&nbsp;Exclusive member features:</h3>
+            <br>
+            <ul>
+                <li><p><i class="fa fa-check"></i> Direct access to our celebrities</p></li>
+                <li><p><i class="fa fa-check"></i> See full demographics of celebrities</p></li>
+                <li><p><i class="fa fa-check"></i> Keep track of your campaign status</p></li>
+            </ul>
+        </div>
+    </div>
+
+</div>

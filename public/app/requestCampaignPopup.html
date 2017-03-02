@@ -1,0 +1,149 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h4 class="modal-title">Request a campaign</h4>
+    </div>
+    <div class="modal-body">
+        <uib-alert ng-repeat="alert in alerts" type="{{::alert.type}}" close="closeAlert($index)">{{::alert.msg}}</uib-alert>
+        <div ng-show="submittedRequest" class="card empty-msg-card">
+            <div class="card-block text-center">
+                <p>Successfully submitted request. Please wait for our team to contact you within 48 hours.</p>
+            </div>
+        </div>
+        <form class="form md-padding" ng-show="!submittedRequest" name="requestForm" novalidate>
+            <div  ng-if="selectedCeleb.length > 0" class="form-group">
+                <h6>Selected Celebrities: </h6>
+                <h5 ng-if="!readOnly" class="text-center">
+                    <div class="row">
+                        <div class="col-md-8" ng-repeat="celeb in selectedCeleb">
+                            <md-card md-colors="::{ background: 'grey-200' }">
+                                <md-card-header>
+                                    <img style="width: 55px;height: 55px;" ng-src="{{::celeb.picture.data.url}}"/>
+                                    <md-card-header-text>
+                                        <span class="md-title">{{::celeb.name}}</span>
+                                        <span class="md-subhead">{{::celeb.fan_count | number}} Fans</span>
+                                        <span class="md-title">$500.00 daily</span>
+                                    </md-card-header-text>
+
+                                </md-card-header>
+                            </md-card>
+                        </div>
+                    </div>
+
+                    <!--<span ng-repeat="celeb in selectedCeleb" class="fp-media-card"> <img class="img-circle user-avatar" ng-src="{{celeb.picture.data.url}}" > {{celeb.name}} </span>-->
+                </h5>
+                <h5 ng-if="readOnly" class="text-center">{{selectedCeleb}}</h5>
+            </div>
+
+            <br/>
+
+            <!--<div ng-show="!$root.user">-->
+                <!--<section>-->
+                    <!--<h6>Contact:</h6>-->
+                    <!--<div class="form-group row required" ng-class="{ 'has-error' : requestForm.name.$invalid && requestForm.name.$touched }">-->
+                        <!--<label class="col-md-3"><medium>Name</medium></label>-->
+                        <!--<div class="col-md-8">-->
+                            <!--<input class="form-control input" name="name" ng-model="name" required/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="form-group row required" ng-class="{ 'has-error' : requestForm.email.$invalid && requestForm.email.$touched }">-->
+                        <!--<label class="col-md-3"><medium>Email</medium></label>-->
+                        <!--<div class="col-md-8">-->
+                            <!--<input class="form-control input" name="email" type="email" ng-model="email" required/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</section>-->
+                <!--<hr>-->
+            <!--</div>-->
+
+            <md-radio-group ng-model="form.campaignType" ng-init="form.campaignType='paidCampaign'" class="row ng-hide">
+                <div class="col-md-4">Campaign Type</div>
+                <md-radio-button class="col-md-4" value="paidCampaign">Paid Campaign</md-radio-button>
+                <md-radio-button value="organicPost" class="col-md-4">Organic Post</md-radio-button>
+            </md-radio-group>
+
+            <md-input-container class="md-block margin-top-0">
+                <md-icon md-font-icon="fa fa-link"></md-icon>
+                <input type="text" ng-model="form.productLink" required
+                       placeholder="Product/Service Link">
+            </md-input-container>
+
+            <md-input-container class="md-block ng-hide">
+                <md-icon md-font-icon="fa fa-usd"></md-icon>
+                <input type="number" ng-model="form.budget" placeholder="Endorsement budget (USD)" ng-value="1000"  name="budget"></input>
+            </md-input-container>
+
+            <label style="color.grey">Campaign Length (Days)</label>
+
+            <md-slider-container>
+              <md-slider flex min="3" max="30" ng-model="color.yellow" aria-label="yellow" id="yellow-slider">
+              </md-slider>
+              <md-input-container>
+                <input flex type="number" ng-value="3" ng-model="color.yellow" aria-label="yellow" aria-controls="yellow-slider">
+              </md-input-container>
+              <div>days</div>
+            </md-slider-container>
+
+            <!-- <md-slider-container class="md-block margin-top-0">
+                <span>Campaign Length</span>
+                <md-slider flex min="3" max="30" ng-model="compaignLength" required></md-slider>
+                <md-input-container>
+                  <input flex type="number" ng-model="color.yellow" aria-label="yellow" aria-controls="yellow-slider">
+                </md-input-container>
+            </<md-slider-container> -->
+
+            <md-input-container class="md-block margin-0">
+                <md-datepicker ng-model="myDate" class="full-width" md-placeholder="Estimate your campaign start date" required></md-datepicker>
+            </md-input-container>
+            <!--<div ng-show="type == 'app'">-->
+                <!--<div class="form-group"> <label class="control-label"><h5>Supported Platforms</h5></label>-->
+                    <!--<div>-->
+                        <!--<label>-->
+                            <!--<input class="checkbox squared" ng-model="isIosSupported" type="checkbox">-->
+                            <!--<span>iOS</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input class="checkbox squared" type="checkbox" ng-model="isAndroidSupported">-->
+                            <!--<span>Android</span>-->
+                        <!--</label>-->
+                    <!--</div>-->
+                    <!--<label>-->
+                        <!--<input class="checkbox squared" type="checkbox" ng-model="isWinSupported">-->
+                        <!--<span>Windows Devices</span>-->
+                    <!--</label>'-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="form-group ">-->
+                <!--<div class="row">-->
+                    <!--<div ng-show="isIosSupported" class="col-md-8">-->
+                        <!--<label >iOS Install Link</label>-->
+                        <!--<input type="url" class="input form-control" ng-model="form.iosLink" ng-init="form.iosLink = ''"/>-->
+                    <!--</div>-->
+                    <!--<div ng-show="isAndroidSupported" class="col-md-8">-->
+                        <!--<label>Android Install Link</label>-->
+                        <!--<input type="url" ng-model="form.androidLink" class="input form-control" ng-init="form.androidLink = ''"/>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <md-input-container class="md-block">
+                <md-icon md-font-icon="fa fa-facebook-official"></md-icon>
+                <input ng-model="user.facebookBusinessId" placeholder="Facebook Business ID" name="facebookBusinessId"></input>
+                <md-button class="md-primary" ng-click="openHowToFindID()">How to find it?</md-button>
+            </md-input-container>
+            <md-input-container class="md-block">
+                <textarea ng-model="form.notes" placeholder="Enter notes for FamePick business team."></textarea>
+            </md-input-container>
+        </form>
+
+
+    </div>
+
+    <div class="modal-footer">
+        <div class="col-md-12 text-center">
+            <button ng-show="!redirection" class="btn btn-black-fill" type="button" ng-click="close()"><span ng-show="!submittedRequest && !readOnly">Cancel</span><span ng-show="submittedRequest || readOnly">Close</span></button>
+            <button class="btn btn-yellow-fill" ng-show="!submittedRequest && !readOnly"  ng-disabled="requestForm.$invalid" ng-click="submitDealProposal()">Submit</button>
+        </div>
+    </div>
+</div>
+</div>

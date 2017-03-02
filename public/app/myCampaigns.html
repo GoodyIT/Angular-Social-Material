@@ -1,0 +1,48 @@
+<div ng-controller="myCampaignsCtrl" class="container">
+    <div class="audience-status">
+        <div class="page-title">
+            <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+            <h2 class="pull-left">CUSTOM AUDIENCE & CAMPAIGNS</h2>
+        </div>
+        <p>Track your custom audiences and campaigns status here.</p>
+        <br>
+        <div ng-show="myCampaigns.length === 0" class="alert alert-info row">You have not requested any campaign or built any custom audience. Please go to Search page to start process.</div>
+        <tri-widget ng-show="myCampaigns.length > 0" flex content-layout="column" content-layout-align="center">
+            <md-table-container>
+                <table md-table class="md-data-table">
+                    <thead md-head md-order="audienceTable.order">
+                    <tr md-row>
+                        <th md-column md-order-by="title" decend-first>Name</th>
+                        <th md-column md-order-by="stage_id">Custom Audience Status</th>
+                        <th md-column md-order-by="stage_id">Campaign Status</th>
+                        <th md-column></th>
+                    </tr>
+                    </thead>
+                    <tbody md-body>
+                    <tr md-row ng-repeat="campaign in myCampaigns | orderBy: audienceTable.order | limitTo: audienceTable.limit : (audienceTable.page -1) * audienceTable.limit">
+                        <td md-cell><a ng-click="openPerfProjectionPopup()"href>{{campaign.title}}</a></td>
+                        <td md-cell >
+                            <span ng-show="!campaign[PIPEDRIVE_FIELDS.userAttributes]">N/A</span>
+                            <span ng-show="campaign[PIPEDRIVE_FIELDS.userAttributes]">
+                                <span class="status pending-status" ng-show="campaign.stage_id=='16' ||campaign.stage_id=='43'">In Progress <i class="fa fa-ellipsis-h"></i></span>
+                                <span class="status ready-status" ng-show="campaign.stage_id!='16' && campaign.stage_id!='43'">Ready <i class="fa fa-check"></i></span>
+                            </span>
+                        </td>
+                        <td md-cell>
+                            <span ng-show="campaign.stage_id=='16' ||campaign.stage_id=='43'">N/A</span>
+                            <span ng-show="campaign.stage_id=='22' ||campaign.stage_id=='62'">(Not Started)</span>
+                            <span class="status pending-status" ng-show="campaign.stage_id=='17' || campaign.stage_id=='18' ||campaign.stage_id=='44'||campaign.stage_id=='45'">In Progress <i class="fa fa-ellipsis-h"></i></span>
+                            <span class="status ready-status" ng-show="campaign.stage_id=='19' ||campaign.stage_id=='46'">Completed <i class="fa fa-check"></i></span>
+                        </td>
+                        <td md-cell>
+                            <a ng-show="campaign.stage_id!='16' && campaign.stage_id!='43'" ng-click="openPerfProjectionPopup()"href>View Details</a>
+                            <md-button class="md-raised margin-0 pull-right md-primary" ng-if="campaign.stage_id=='22' ||campaign.stage_id=='62'" ng-click="$root.openRequestCampaignPopup([], campaign)" aria-label="flat button">Run a campaign with this audience set</md-button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <md-table-pagination md-limit="audienceTable.limit" md-page="audienceTable.page" md-total="{{myCampaigns.length}}" md-page-select></md-table-pagination>
+        </tri-widget>
+    </div>
+</div>

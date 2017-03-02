@@ -1,0 +1,430 @@
+<div class="container">
+    <uib-tabset active="true" class="social-tabset">
+        <uib-tab index="0" class="tab-facebook">
+            <uib-tab-heading>
+                <i class="fa fa-facebook"></i>&nbsp;Facebook
+            </uib-tab-heading>
+            <br>
+            <!--<h2 ng-if="!showAdminStats">YOUR <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:200px;"/> DASHBOARD</h2>-->
+            <div class="page-title" ng-if="!showAdminStats">
+                <h2 class="pull-left">YOUR&nbsp;</h2>
+                <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+                <h2 class="pull-left">DASHBOARD</h2>
+            </div>
+            <p>Welcome to the FamePick portal! Below you will find a number of metrics regarding your social accounts's performance. Our platform aggregates hundreds of data points along with our custom formulas to deliver actionable data for your campaigns.</p>
+            <br>
+            <div ng-show="!$root.user.facebook" class="text-center">
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="card empty-msg-card">
+                    <div class="card-block text-center">
+                        <p>You have not linked your Facebook account yet.</p>
+                        <p>
+                            <a href="/auth/facebook" class="btn btn-block btn-facebook btn-social"><i class="fa fa-facebook"></i>Sign in with Facebook and reload</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="$root.user.facebook && $root.user.profile.fbPageList.length < 1" class="alert alert-warning row"><big class="col-md-10"><i class="fa fa-info-circle" style="font-size: 16pt;"></i>&nbsp;&nbsp;To see insights of your Facebook page, please select pages to continue.<span></span></big><div class="col-md-2"><md-button class="md-primary md-raised" ng-click="openOnBoarding()">Select pages</md-button> </div></div>
+
+            <div ng-show="$root.user.facebook && $root.user.profile.fbPageList.length > 0">
+                <h3 ng-if="!showAdminStats">Insights of
+                <span class="dropdown title-dropdown" ng-if="$root.user.profile.fbPageList.length > 1">
+                <button class="btn btn-white dropdown-toggle" type="button" data-toggle="dropdown">{{pageMap[$root.user.profile.facebookDefaultPageId].name}}</button>
+                <ul class="dropdown-menu">
+                    <li ng-class="{'active':$root.user.profile.facebookDefaultPageId == page.id}" ng-repeat="page in $root.user.profile.fbPageList" ng-click="switchStatsPage(page)"><a href>{{page.name}}&nbsp;</a></li>
+                </ul>
+                </span>
+                    <span ng-if="$root.user.profile.fbPageList.length == 1">{{pageMap[$root.user.profile.facebookDefaultPageId].name}}</span>
+                </h3>
+                <h2 ng-if="showAdminStats">Insights of {{$root.fbStats.name}}</h2>
+                <br>
+                <div  class="alert alert-warning row"><big class="col-md-10"><i class="fa fa-info-circle" style="font-size: 16pt;"></i>&nbsp;&nbsp;To see full user metrics breakdown, please click Enable and accept the permission request from the email sent by Facebook for each linked page(s).<span></span></big><div class="col-md-2"><md-button class="md-primary md-hue-1 md-raised" ng-click="requestPermission()">Enable</md-button> </div></div>
+                <div ng-if="sentPermissionRequest && !allFbPageApproved"  class="alert alert-danger"><big><i class="fa fa-exclamation-circle" style="font-size: 16pt;"></i>&nbsp;&nbsp;You have not granted FamePick permissions to access your Facebook Page(s) : <span ng-repeat="page in notApprovedList" ng-if="!page.approved"><a ng-href="https://www.facebook.com/{{page.id}}/settings/?tab=admin_roles" target="_blank">{{page.name}}</a><span ng-if="$index < notApprovedList.length-1">, </span></span>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<md-button class="md-accent md-raised" ng-click="openHowToGrantPermissionPopup()">How to do it?</md-button> </big></div>
+                <div  class="alert alert-warning row"><big class="col-md-10"><i class="fa fa-info-circle" style="font-size: 16pt;"></i>&nbsp;&nbsp;To start renting out your page, please click Submit and enter some information.<span></span></big><div class="col-md-2"><md-button class="md-primary md-hue-1 md-raised" ng-click="completeProfile()">Submit</md-button> </div></div>
+                <br>
+                <div ng-show="!$root.loadedFbData|| sendingPermissionRequest" class="cssload-container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <md-progress-circular class="margin-auto"  md-mode="indeterminate"></md-progress-circular>
+                </div>
+                <div ng-show="$root.loadedFbData">
+                    <section>
+                        <div layout="row" layout-xs="column" layout-wrap>
+                            <div flex flex-sm="30" >
+                                <md-card class="widget" md-colors="::{ background: 'blue', color: 'white' }">
+                                    <md-card-content layout="row" layout-align="space-between center">
+                                        <md-icon class="font-size-5 inherit-color" md-font-icon="fa fa-comments"></md-icon>
+                                        <div layout="column">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis"  >{{$root.fbStats.avgEngagement.avgEngagement*100|number:2}}%</p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Engagement</p>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            <div flex flex-sm="30" >
+                                <md-card  class="widget" md-colors="::{ background: 'pink', color: 'white' }">
+                                    <md-card-content layout="row" layout-align="space-between center">
+                                        <md-icon class="font-size-5 inherit-color" md-font-icon="fa-users fa"></md-icon>
+                                        <div layout="column">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">{{$root.fbStats.likes|simplifyNum}}</p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Followers</p>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            <div flex flex-sm="30">
+                                <md-card class="widget" md-colors="::{ background: 'green', color: 'white' }">
+                                    <md-card-content layout="row" layout-align="space-between center">
+                                        <md-icon class="font-size-5 inherit-color" md-font-icon="fa-eye fa"></md-icon>
+                                        <div layout="column" class="text-center">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">{{$root.fbStats.avgEngagement.avgReaches|simplifyNum}}</p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Avg. Reach</p>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            <div flex flex-sm="30">
+                                <md-card  class="widget" md-colors="::{ background: 'orange', color: 'white' }">
+                                    <md-card-content layout="row" layout-align="space-between center">
+                                        <md-icon class="font-size-5 inherit-color" md-font-icon="fa fa-line-chart"></md-icon>
+                                        <div layout="column">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis">
+                                                <span ng-if="$root.fbStats.diff > -1" ><i class="fa fa-long-arrow-up"></i> {{$root.fbStats.diff|simplifyNum}} </span>
+                                                <span ng-if="$root.fbStats.diff < 0"><i class="fa fa-long-arrow-down"></i> {{$root.fbStats.diff*-1|simplifyNum}} </span>
+                                            </p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0" translate>Likes Growth</p>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                            <div flex="25" flex-sm="30">
+                                <md-card  class="widget" md-colors="::{ background: 'primary', color: 'white' }">
+                                    <md-card-content layout="row" layout-align="space-between center">
+                                        <div layout="column">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis"><i class="fa fa-female"></i> {{Math.round(($root.fbStats.gender.female/($root.fbStats.gender.male+$root.fbStats.gender.female))*100)}}%</p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0 text-center" >Female</p>
+                                        </div>
+                                        <div layout="column">
+                                            <p class="md-display-1 font-weight-100 margin-top-0 margin-bottom-0 text-ellipsis"><i class="fa fa-male"></i> {{Math.round(($root.fbStats.gender.male/($root.fbStats.gender.male+$root.fbStats.gender.female))*100)}}%</p>
+                                            <p class="md-body-2 margin-top-0 margin-bottom-0 text-center" >Male</p>
+                                        </div>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </div>
+                        <div>
+                            <br>
+                            <section uib-collapse="isCollapsed">
+                                <div layout="row">
+                                    <div flex="60">
+                                        <md-card  class="widget">
+                                            <md-card-content>
+                                                <h5>Most Popular In (Top 5 countries)</h5>
+                                                <br>
+                                                <div>
+                                                    <ul class="list-group text-left">
+                                                        <li ng-show="$index < 5 && Math.round((item[1]/totalLocationNum)*100) > 0" class="list-group-item"
+                                                            ng-repeat="item in $root.fbStats.location | orderBy:'-1'" style="background-color:transparent;">
+                                                            <span class="badge badge-yellow-fill">{{Math.round((item[1]/totalLocationNum)*100)}}%</span>
+                                                            <span>{{item[0]}}</span>
+                                                        </li>
+                                                    </ul>
+                                                    <br>
+                                                    <br>
+                                                </div>
+                                            </md-card-content>
+                                        </md-card>
+                                    </div>
+                                    <div flex="40">
+                                        <md-card class="widget">
+                                            <md-card-content>
+                                                <h5>Age Group</h5>
+                                                <br>
+                                                <!--<i class="card-bg-icon fa-birthday-cake fa"></i>-->
+
+                                                <nvd3 class="ageGroupChart" options="chartOptions" data="chartData"></nvd3>
+
+                                            </md-card-content>
+                                        </md-card>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="text-center">
+                                <hr class="on-line-text-line">
+                                <div><a href="" ng-click="toggleSeeMore()"><div class="on-line-text"><span ng-show="isCollapsed">See More</span><span ng-show="!isCollapsed">Hide</span><br><i class="fa" ng-class="{'fa-sort-down':isCollapsed, 'fa-sort-up':!isCollapsed}"></i></div></a></div>
+                            </div>
+
+                        </div>
+                    </section>
+                    <section ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus !== 'approved'">
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <img style="width:100%;" src="../img/mockBestPerfPosts.jpg"/>
+                                <div class="alert alert-info centered-text">
+                                    <big ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'none'">Enable full analytic report to see data of your page.</big>
+                                    <big ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'sent'">Grant permission to FamePick on Facebook to see data of your page.</big>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'approved'">
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <md-card  class="widget">
+                                    <md-card-content>
+                                        <h4>Top 5 Posts</h4>
+                                        <div class="card empty-msg-card" ng-show="$root.fbStats.performance.length == 0">
+                                            <br>
+                                            <br>
+                                            <br>
+                                            <div class="card-block text-center">
+                                                <p>Your account analytics are being processed. Please come back to check later.</p>
+                                            </div>
+                                        </div>
+                                        <table class="table table-striped" ng-show="$root.fbStats.performance.length > 0">
+                                            <thead class="item item-list-header ">
+                                            <tr >
+                                                <th >Picture</th>
+                                                <th >Post</th>
+                                                <th >Reach</th>
+                                                <th >Reactions</th>
+                                                <th >Clicks</th>
+                                                <th >Engagement</th>
+                                                <th >Posted Date (PST)</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody >
+                                            <tr ng-repeat="post in $root.fbStats.performance">
+                                                <td>
+                                                    <span class="fp-media-card" ><span ng-show="!post.picture || post.picture===''">N/A</span> <img ng-show="post.picture && post.picture!==''" class="user-avatar" ng-src="{{post.picture}}"/></span>
+                                                </td>
+                                                <td >
+                                                    <a target="_blank" class="" ng-href="https://www.facebook.com/{{post.postId}}">
+                                                        {{post.message | cut:false:30:' ...'}}</a><a ng-if="!post.message" target="_blank" ng-href="https://www.facebook.com/{{post.postId}}">[Click to see post]</a>
+                                                </td>
+                                                <td >{{post.reaches | number}}</td>
+                                                <td >{{post.reactions | number}}</td>
+                                                <td >{{post.clicks | number}}</td>
+                                                <td >{{(post.performance*100)|number:2}}%</td>
+                                                <td >{{post.createTime*1000 | date:'shortDate'}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </md-card-content>
+                                </md-card>
+                            </div>
+                        </div>
+                    </section>
+                    <hr>
+                    <section ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus !== 'approved'">
+                        <div class="row">
+                            <div class="col col-md-12">
+                                <img style="width:100%;" src="../img/mockFansOnlineChart.jpg"/>
+                                <div class="alert alert-info centered-text">
+                                    <big ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'none'">Enable full analytic report to see data of your page.</big>
+                                    <big ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'sent'">Grant permission to FamePick on Facebook to see data of your page.</big>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section ng-show="pageMap[$root.user.profile.facebookDefaultPageId].requestStatus === 'approved'">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title">
+                                            <div class="title-block"><h4>Average Number of Online Fans of a week</h4>
+                                                <b>Click to see breakdown of the day below.</b>
+                                            </div>
+                                            <div class="row">
+                                                <a class="text-center btn card col-md-one-seventh col-sm-4" ng-repeat="day in $root.fbStats.fansOnlineStat.details" ng-click="switchFanOnlineDay(day)">
+                                                    <div href="" class="card-block grey-card-block" ng-class="{'yellow-card-block':day.day == selectedFanOnlineDay.day}">
+                                                        <h7>{{dayOfWeekMap[day.day]}}</h7>
+                                                        <h4>{{day.avg | simplifyNum}}</h4>
+                                                        <h6><small>{{day.avg/$root.fbStats.likes*100|number:1}}% fans</small></h6>
+                                                        <h6 ng-show="day.count > 0"><small>{{hourMap[day.peak-1]}}-{{hourMap[day.peak]}} PST</small></h6>
+                                                        <h6 ng-show="day.count == 0"><small>N/A</small></h6>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-block height-2">
+                                        <div class="title"><div class="title-block"><h4>Fans Online Time of <span class="text-yellow">{{dayOfWeekMap[selectedFanOnlineDay.day]}}</span></h4>
+                                            <b>Time is displayed in PST.</b>
+                                        </div> </div>
+                                        <nvd3 options="fansOnlineChartOptions" data="fansOnlineChartData"></nvd3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+        </uib-tab>
+        <uib-tab index="1" select="switchTab(1)" class="tab-instagram">
+            <uib-tab-heading>
+                <i class="fa fa-instagram"></i>&nbsp;Instagram
+            </uib-tab-heading>
+            <br>
+            <div class="page-title" ng-if="!showAdminStats">
+                <h2 class="pull-left">YOUR&nbsp;</h2>
+                <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+                <h2 class="pull-left">DASHBOARD</h2>
+            </div>
+            <p>Welcome to the FamePick portal! Below you will find a number of metrics regarding your social accounts's performance. Our platform aggregates hundreds of data points along with our custom formulas to deliver actionable data for your campaigns.</p>
+            <br>
+            <div ng-show="!$root.user.instagram" class="text-center">
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="card empty-msg-card">
+                    <div class="card-block text-center">
+                        <p>You have not linked your Instagram account yet.</p>
+                        <p>
+                            <a href="/auth/instagram" class="btn btn-block btn-instagram btn-social"><i class="fa fa-instagram"></i>Sign in with Instagram and reload</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="$root.user.instagram">
+                <div ng-show="!loadedSocialData" class="cssload-container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <md-progress-circular class="margin-auto"  md-mode="indeterminate"></md-progress-circular>
+                </div>
+                <div ng-show="loadedSocialData">
+                    <br>
+                    <h2>Insights of @{{instagramData.username}}</h2>
+                    <br>
+                    <section>
+                        <div class="row">
+                            <!--Followers-->
+                            <div class="col col-md-2">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title-block">
+                                            <h4>Total Followers</h4>
+                                        </div>
+                                        <i class="card-bg-icon fa fa-users"></i>
+                                        <h2>{{instagramData.counts.followed_by|simplifyNum}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Engagements-->
+                            <div class="col col-md-2">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title-block">
+                                            <h4>Following</h4>
+                                        </div>
+                                        <i class="fa-bullhorn fa card-bg-icon"></i>
+                                        <h2>{{instagramData.counts.follows|simplifyNum}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Like Growth-->
+                            <div class="col col-md-12">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title-block">
+                                            <h4>Followers List:</h4>
+                                        </div>
+                                        <i class="fa-list fa card-bg-icon"></i>
+                                        <h4 ng-repeat="people in instagramData.followers"><a  ng-href="https://www.instagram.com/{{people.username}}" target="_blank">{{people.username}}</a></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </uib-tab>
+        <uib-tab index="2" select="switchTab(2)" class="tab-twitter">
+            <uib-tab-heading>
+                <i class="fa fa-twitter"></i>&nbsp;Twitter
+            </uib-tab-heading>
+            <br>
+            <div class="page-title" ng-if="!showAdminStats">
+                <h2 class="pull-left">YOUR&nbsp;</h2>
+                <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+                <h2 class="pull-left">DASHBOARD</h2>
+            </div>
+            <p>Welcome to the FamePick portal! Below you will find a number of metrics regarding your social accounts's performance. Our platform aggregates hundreds of data points along with our custom formulas to deliver actionable data for your campaigns.</p>
+            <br>
+            <div ng-show="!$root.user.twitter" class="text-center">
+                <br>
+                <br>
+                <br>
+                <br>
+                <div class="card empty-msg-card">
+                    <div class="card-block text-center">
+                        <p>You have not linked your Twitter account yet.</p>
+                        <p>
+                            <a href="/auth/twitter" class="btn btn-block btn-twitter btn-social"><i class="fa fa-twitter"></i>Sign in with Twitter and reload</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="$root.user.twitter">
+                <div ng-show="!loadedSocialData" class="cssload-container">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <md-progress-circular class="margin-auto"  md-mode="indeterminate"></md-progress-circular>
+                </div>
+                <div ng-show="loadedSocialData">
+                    <br>
+                    <h2>Insights of @{{twitterData.name}}</h2>
+                    <br>
+                    <section>
+                        <div class="row">
+                            <!--Followers-->
+                            <div class="col col-md-2">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title-block">
+                                            <h4>Followers</h4>
+                                        </div>
+                                        <i class="card-bg-icon fa fa-users"></i>
+                                        <h2>{{twitterData.followers|simplifyNum}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Engagements-->
+                            <div class="col col-md-2">
+                                <div class="card">
+                                    <div class="card-block height-1">
+                                        <div class="title-block">
+                                            <h4>Following</h4>
+                                        </div>
+                                        <i class="fa-bullhorn fa card-bg-icon"></i>
+                                        <h2>{{twitterData.friends|simplifyNum}}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+
+
+</div>

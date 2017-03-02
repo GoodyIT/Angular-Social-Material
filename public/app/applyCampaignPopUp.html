@@ -1,0 +1,169 @@
+<div class="create-campaign-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Apply for Campaign</h3>
+    </div>
+    <div class="modal-body">
+        <form name="theForm" novalidate>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="headline">Content to Post</label>
+        <textarea class="form-control" rows="5"
+                  id="headline" ng-model="appForm.postContent"
+                  placeholder="Content I will post on my social media platform."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="thumbnailInput">Image (Optional)</label>
+
+                        <div class="input-group col-lg-12">
+                            <div class="btn-group">
+                                <label class="btn upload-button" ng-model="imageType" uib-btn-radio="'url'" uncheckable
+                                       active>
+                                    <i class="fa fa-external-link"></i>
+                                    Enter image URL
+                                </label>
+                                <label class="btn upload-button" ng-model="imageType" uib-btn-radio="'file'"
+                                       uncheckable>
+                                    <i class="fa fa-upload"></i>
+                                    Upload an image
+                                </label>
+                            </div>
+                            <div ng-show="imageType == 'url'">
+                                <br><input id="imageUrl" type="text" ng-model="appForm.imgUrl"
+                                           class="form-control input"
+                                           name="thumbnailInput" id="thumbnailInput" placeholder="Enter an image URL">
+
+                            </div>
+                            <div ng-show="imageType == 'file'">
+                                <br><input name="file" type="file" file/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>My Qualifications (Optional)</label>
+        <textarea class="form-control" rows="5"
+                  id="reasons" ng-model="appForm.reasons"
+                  placeholder="Enter reasons for the campaign owner to choose me."></textarea>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="thumbnailInput">Platform</label>
+                        <div class="input-group col-md-12">
+                            <div class="help-block" ng-show="appForm.platform == '' || !appForm.platform">Please select a platform</div>
+                            <div class="btn-group">
+                                <label ng-if="$root.user.facebook" class="btn btn-facebook platform-btn" ng-model="appForm.platform" uib-btn-radio="'facebook'" uncheckable
+                                       active>
+                                    <i class="fa fa-facebook"></i>
+                                    Facebook
+                                </label>
+                                <label class="btn btn-twitter platform-btn" ng-if="$root.user.twitter" ng-model="appForm.platform" uib-btn-radio="'twitter'"
+                                       uncheckable>
+                                    <i class="fa fa-twitter"></i>
+                                    Twitter
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="appForm.platform == 'facebook'" >
+                        <label>Facebook Page to post</label><br/>
+
+                        <div ng-show="pageList.length > 0" class="input-group col-lg-10">
+                            <select ng-model="facebookPageId"
+                                    ng-options="page.id as page.name for page in pageList" class="form-control">
+                            </select>
+                        </div>
+                        <div ng-show="pageList.length < 1"><p class="alert alert-info">You need to have a Facebook Page
+                            to apply.</p></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date and Time to Post
+                            <p ng-show="theForm.date.$invalid && !theForm.date.$pristine"
+                               class="help-block">Date is required.</p>
+                        </label><br/>
+
+                        <p class="input-group col-md-8">
+                            <input type="text" class="form-control"
+                                   uib-datepicker-popup="{{format}}" ng-init="isCalendarOpened=false"
+                                   ng-model="date"
+                                   name="date"
+                                   id="date"
+                                   ng-init="date=''"
+                                   is-open="isCalendarOpened"
+                                   min-date="minDate"
+                                   max-date="maxDate"
+                                   datepicker-options="dateOptions"
+                                   ng-required="true"
+                                   alt-input-formats="altInputFormats"/>
+            <span class="input-group-btn">
+                <button type="button" class="btn btn-yellow" style="padding:3px" ng-click="isCalendarOpened = !isCalendarOpened"><i
+                        class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+                        </p>
+        <span class="input-group col-md-6">
+            <uib-timepicker ng-model="time" ng-init="time =''"></uib-timepicker>
+        </span>
+                    </div>
+                    <div class="form-group" ng-if="appForm.type == 'trade'">
+                        <label>My requirement:</label>
+
+                        <div class="btn-group">
+                            <label class="btn upload-button" ng-model="requirementType" uib-btn-radio="'text'" active>
+                                <i class="fa fa-pencil"></i>
+                                Enter requirements
+                            </label>
+                            <label class="btn upload-button" ng-model="requirementType" uib-btn-radio="'campaign'">
+                                <i class="fa fa-list-alt"></i>
+                                Choose a campaign
+                            </label>
+                        </div>
+                        <br>
+
+                        <div ng-show="requirementType == 'text'">
+                            <br>
+            <textarea class="form-control" rows="5"
+                      id="headline" ng-model="appForm.requirements"
+                      placeholder="Enter what you want the campaign owner to post for you in return."></textarea>
+                        </div>
+                        <div ng-show="requirementType == 'campaign'">
+                            <br>
+                            <select class="form-control" ng-model="appForm.applicantCampaignId"
+                                    ng-options="myCpn.campaignId as myCpn.topic for myCpn in myCampaigns">
+                                <option value="" selected>--Select a campaign--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Preview:</label>
+
+                        <div class="preview">
+                            <div id="previewDescription" ng-bind="appForm.postContent"></div>
+
+                            <img id="previewThumbnail" ng-if="appForm.imgUrl!==undefined && appForm.imgUrl!==''"
+                                 ng-src="{{appForm.imgUrl}}"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button ng-click="close()" id="cancel-create-campaign-button"
+                                    class="card-button btn btn-lightgray-fill">
+                                Cancel
+                            </button>
+                        </div>
+                        <div class="col-md-8">
+                            <button class="card-button btn btn-yellow-fill"
+                                    ng-disabled="theForm.$invalid || !appForm.platform || appForm.platform == ''"
+                                    ng-click="submitAppForm()">Submit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

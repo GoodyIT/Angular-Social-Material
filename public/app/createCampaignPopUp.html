@@ -1,0 +1,403 @@
+<div class="create-campaign-popup">
+  <div class="modal-header">
+    <a class="fa fa-times close-btn" href ng-click="close()"></a>
+    <h3 class="modal-title">Create Campaign
+      <!--TODO: bring back when supporting trade campaign-->
+      <!--<div class="btn-group pull-right">-->
+      <!--<label class="btn btn-sm header-button active" ng-model="campaign.type" uib-btn-radio="'trade'" uncheckable-->
+      <!--active>-->
+      <!--Trade Post-->
+      <!--</label>-->
+      <!--<label class="btn btn-sm header-button" ng-model="campaign.type" uib-btn-radio="'pay'" uncheckable>-->
+      <!--Pay Campaign-->
+      <!--</label>-->
+      <!--</div>-->
+    </h3>
+  </div>
+  <div ng-switch="currentStep">
+    <div ng-if="!hasCreditCard">
+      <div class="modal-body">
+        <p>No credit card associated with your account, please complete your billing details before create a campaign.
+        <p>To update billing details, simply follow these steps</p>
+        <ol>
+          <li>Open profile page</li>
+          <li>Select Billing menu</li>
+          <li>Input your billing details</li>
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <a class="pull-right btn btn-yellow-fill" href="#/profile">Update your billing details</a>
+      </div>
+    </div>
+    <div ng-if="hasCreditCard">
+      <form ng-switch-when="1" name="campaignForm1" novalidate>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="postTitle">Post Title
+                  <p ng-show="campaignForm1.topic.$invalid && !campaignForm1.topic.$pristine  && !campaignForm1.topic.$error.minlength"
+                     class="help-block">Post title is required.</p>
+                  <p ng-show="campaignForm1.topic.$error.minlength" class="help-block">Post title is too
+                    short.</p>
+                </label>
+                <input type="text" class="form-control" id="postTitle"
+                       placeholder="Enter a title for your campaign"
+                       ng-required="true"
+                       name="topic"
+                       ng-model-options="{ debounce: 500 }"
+                       ng-model="campaign.topic"
+                       ng-minlength="4"
+                       required/>
+              </div>
+              <div class="form-group">
+                <label for="headline">Description</label>
+                <textarea class="form-control" rows="5" id="headline" ng-model="campaign.details"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="thumbnailInput">Thumbnail</label>
+                <div class="input-group">
+                  <div class="btn-group">
+                    <label class="btn upload-button" ng-model="$parent.$parent.imageType" uib-btn-radio="'url'"
+                           uncheckable
+                           active>
+                      <i class="fa fa-external-link"></i>
+                      Link Image
+                    </label>
+                    <label class="btn upload-button" ng-model="$parent.$parent.imageType" uib-btn-radio="'file'"
+                           uncheckable>
+                      <i class="fa fa-upload"></i>
+                      Upload Image
+                    </label>
+                  </div>
+                </div>
+                <br>
+                <div ng-show="imageType == 'url'" heading="Enter thumbnail URL">
+                  <input id="imageUrl" type="text" ng-model="campaign.thumbnail"
+                               class="form-control input"
+                               name="thumbnailInput" id="thumbnailInput"
+                               placeholder="Enter a thumbnail URL">
+                </div>
+                <div ng-show="imageType == 'file'" heading="Upload an thumbnail">
+                  <input name="file" type="file" file="$parent.$parent"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="followersNumInput">Number of followers required
+                  <p ng-show="campaignForm.followersNumInput.$invalid && !campaignForm.followersNumInput.$pristine"
+                     class="help-block">Invalid value.</p>
+                </label>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <input type="number" ng-model="campaign.numberOfFollowers"
+                           class="form-control" id="followersNumInput" name="followersNumInput"
+                           min="0" max="50000000"
+                           placeholder="Enter a number"
+                           required>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="ageRangeInput">Age Range</label><br/>
+                <div id="ageRangeInput" class="btn-group" data-toggle="buttons">
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('13-17')">
+                    <input type="checkbox" autocomplete="off"><label>13-17</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('18-24')">
+                    <input type="checkbox" autocomplete="off"><label>18-24</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('25-34')">
+                    <input type="checkbox" autocomplete="off"><label>25-34</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('35-44')">
+                    <input type="checkbox" autocomplete="off"><label>35-44</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('45-54')">
+                    <input type="checkbox" autocomplete="off"><label>45-54</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('55-64')">
+                    <input type="checkbox" autocomplete="off"><label>55-64</label>
+                  </label>
+                  <label class="age-group-button btn" ng-click="toggleAgeGroup('65+')">
+                    <input type="checkbox" autocomplete="off"><label>65+</label>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group" ng-show="campaign.type=='pay'">
+                <label>Audience Gender (Optional)</label>
+
+                <div class="btn-group input-group">
+                  <label class="gender-button btn btn-default" ng-model="campaign.gender"
+                         uib-btn-radio="'female'" uncheckable>Female</label>
+                  <label class="gender-button btn btn-default" ng-model="campaign.gender"
+                         uib-btn-radio="'male'" uncheckable>Male</label>
+                </div>
+              </div>
+              <div class="form-group" ng-show="campaign.type=='pay'">
+                <label>Location</label>
+                <div class="row">
+                  <div class="col-lg-10">
+                    <div country-select="campaign.location"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Select Platforms</label><br/>
+                <div id="platform-selector" class="btn-group" data-toggle="buttons">
+                  <label class="platform-button btn" ng-click="togglePlatform('facebook')">
+                    <input type="checkbox" autocomplete="off"><i class="fa fa-facebook"/>
+                  </label>
+                  <label class="platform-button btn" ng-click="togglePlatform('twitter')">
+                    <input type="checkbox" autocomplete="off"><i class="fa fa-twitter"></i>
+                  </label>
+                  <label class="platform-button btn" ng-click="togglePlatform('google')">
+                    <input type="checkbox" autocomplete="off"><i class="fa fa-youtube"/>
+                  </label>
+                  <!--
+                 <label class="platform-button btn">
+                     <input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-linkedin"></i>
+                 </label>
+                 <label class="platform-button btn">
+                     <input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-instagram"></i>
+                 </label>
+                 <label class="platform-button btn">
+                     <input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-envelope"></i>
+                 </label>
+                 -->
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group" ng-show="campaign.type=='pay'">
+
+                    <label for="budgetInput">Daily Budget
+                      <p ng-show="campaignForm1.budgetInput.$invalid && !campaignForm1.budgetInput.$pristine"
+                         class="help-block">Invalid value.</p>
+
+                    </label>
+                    <div class="input-group">
+                      <div class="input-group-addon">USD</div>
+                      <input type="number" ng-model="campaign.budget" class="form-control col-lg-1"
+                             id="budgetInput" name="budgetInput" placeholder="Enter total budget"
+                             min="0"
+                             to-number
+                             required>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group" ng-show="campaign.type=='pay'">
+                    <label for="payRateInput">Paying rate
+                      <p ng-show="campaignForm1.payRateInput.$invalid && !campaignForm1.payRateInput.$pristine"
+                         class="help-block">Invalid value.</p>
+                    </label>
+                    <div class="input-group">
+                      <div class="input-group-addon">USD</div>
+                      <input type="number" ng-model="campaign.payRate" class="form-control"
+                             id="payRateInput" name="payRateInput"
+                             placeholder="Enter max rate per action"
+                             min="0.01"
+                             max="1000"
+                             to-number
+                             required>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group" ng-show="campaign.type=='pay'">
+                    <label for="payRateInput">Payment model</label>
+                    <select id="payEventType" class="form-control" ng-model="campaign.payEventType">
+                      <option value="click">Per Click</option>
+                      <option value="install">Per Install</option>
+                      <option value="view">Per View</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group" ng-show="campaign.type=='pay'">
+                    <label for="bid">Bid</label>
+                    <div class="input-group">
+                      <div class="input-group-addon">USD</div>
+                      <input type="number" ng-model="campaign.bid" class="form-control"
+                             id="bid" name="bid"
+                             placeholder="Enter bid"
+                             min="0.01"
+                             max="1000"
+                             to-number
+                             required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="row">
+            <div class="col-sm-12">
+              <button type="button"
+                      ng-disabled="campaignForm1.$invalid"
+                      ng-click="nextStep()"
+                      class="card-button btn btn-yellow-fill pull-right">
+                Next
+              </button>
+              <span class="pull-right">&nbsp;</span>
+              <button id="cancel-create-campaign-button"
+                      ng-click="close()"
+                      class="card-button btn btn-lightgray-fill pull-right">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form ng-switch-when="2" name="campaignForm" novalidate>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group" ng-if="campaign.type=='pay'">
+                <label>Categories (For matching purpose)</label>
+                <div class="btn-group checkbox-group">
+                  <label class="btn btn-sm header-button active" ng-click="categories[name] = !categories[name]"
+                         ng-repeat="(name, value) in $parent.categories" ng-model="value" uib-btn-checkbox>
+                    {{name}}
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group" ng-show="campaign.type=='pay' && campaign.payEventType=='install'">
+                <label>Mobile Tracking (minimal 1 platform)</label>
+                <div class="form-group">
+                  <label for="androidTracking">Android
+                    <p ng-show="campaignForm.androidTracking.$invalid && !campaignForm.androidTracking.$pristine
+                                        && !campaignForm.androidTracking.$error.minlength && !campaignForm.androidTracking.$error.pattern"
+                       class="help-block">Android tracking is required.</p>
+                    <p ng-show="campaignForm.androidTracking.$error.minlength" class="help-block">Android tracking is too
+                      short.</p>
+                    <p ng-show="campaignForm.androidTracking.$error.pattern" class="help-block">Expected format
+                      https://app.adjust.com/xxxxxx</p>
+                  </label>
+                  <input type="text" class="form-control" id="androidTracking"
+                         name="androidTracking"
+                         placeholder="Android Tracking URL"
+                         ng-required="campaign.payEventType=='install' && !campaign.iosTracking"
+                         ng-model-options="{ debounce: 500 }"
+                         ng-minlength="4"
+                         ng-pattern="/https:\/\/app.adjust.com(\/[A-Za-z0-9]{6,6})/"
+                         ng-model="campaign.androidTracking">
+                </div>
+                <div class="form-group">
+                  <label for="iosTracking">iOS
+                    <p ng-show="campaignForm.iosTracking.$invalid && !campaignForm.iosTracking.$pristine
+                                            && !campaignForm.iosTracking.$error.minlength && !campaignForm.iosTracking.$error.pattern"
+                       class="help-block">iOS tracking is required.</p>
+                    <p ng-show="campaignForm.iosTracking.$error.minlength" class="help-block">iOS tracking is too
+                      short.</p>
+                    <p ng-show="campaignForm.iosTracking.$error.pattern" class="help-block">Expected format
+                      https://app.adjust.com/xxxxxx</p>
+                  </label>
+                  <input type="text" class="form-control" id="iosTracking"
+                         name="iosTracking"
+                         placeholder="iOS Tracking URL"
+                         ng-required="campaign.payEventType=='install' && !campaign.androidTracking"
+                         ng-model-options="{ debounce: 500 }"
+                         ng-minlength="4"
+                         ng-pattern="/https:\/\/app.adjust.com(\/[A-Za-z0-9]{6,6})/"
+                         ng-model="campaign.iosTracking">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group" ng-show="campaign.type=='pay' && campaign.payEventType=='install'">
+                <label>Facebook App ID <br><small>If your app has been registered on Facebook, enter the app Id here.</small></label>
+                <input type="text" class="form-control"
+                       ng-model="fbBusinessObj.appId"
+                       placeholder="Facebook App ID"
+                       ng-required="campaign.type=='pay' && campaign.payEventType=='install'">
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group" ng-show="campaign.type=='pay' && campaign.payEventType!='install'">
+                <label>Web Tracking URL</label>
+                <input type="text" class="form-control" id="url"
+                       ng-model="campaign.trackingUrl"
+                       ng-required="campaign.type=='pay' && campaign.payEventType!='install'"
+                       placeholder="Enter the URL for the influencers to include in their posts">
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group" ng-show="fbPageList.length >= 1">
+                <label>Page of your brand</label>
+                <select id="pageSelect" class="form-control" ng-model="fbBusinessObj.brandPageId"
+                        ng-options="page.id as page.name for page in fbPageList"></select>
+              </div>
+            </div>
+
+            <!--<div class="col-md-12">
+              <div class="form-group">
+                <label>Preview:</label>
+                <div class="preview">
+                  <div id="previewTitle" ng-show="campaign.topic!=null && campaign.topic!=''">
+                    {{campaign.topic}}
+                  </div>
+                  <div id="previewTitleDefault" ng-show="campaign.topic==null || campaign.topic==''">
+                    Campaign title
+                  </div>
+                  <div id="previewDescription" ng-show="campaign.details!=null && campaign.details!=''">
+                    {{campaign.details}}
+                  </div>
+                  <div id="previewDescriptionDefault"
+                       ng-show="campaign.details==null || campaign.details==''">
+                    Campaign description
+                  </div>
+
+                  <div id="previewThumbnail">
+                    <img class="img-responsive"
+                         ng-src="{{campaign.thumbnail!==undefined && campaign.thumbnail!=='' ? campaign.thumbnail : 'img/placeholder.jpg'}}"/>
+
+                    <div id="previewLink"
+                         ng-show="campaign.trackingUrl!=null && campaign.trackingUrl!=''">
+                      <i class="fa fa-external-link"></i> <a target="_blank"
+                                                             href="{{campaign.trackingUrl}}">{{linkedHost}}</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>-->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="row">
+            <div class="col-sm-12">
+              <a ng-click="prevStep()"
+                 class="card-button btn btn-lightgray-fill pull-left">
+                Back
+              </a>
+
+              <button type="submit"
+                      ng-disabled="campaignForm.$invalid"
+                      class="card-button btn btn-yellow-fill pull-right" ng-click="submit(campaignForm)">
+                Post Campaign
+              </button>
+              <a ng-click="" id="" class="btn btn btn-yellow pull-right">Preview</a>
+              <span class="pull-right">&nbsp;</span>
+              <a ng-click="close()" id="cancel-create-campaign-button"
+                 class="card-button btn btn-lightgray-fill pull-right">
+                Cancel
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

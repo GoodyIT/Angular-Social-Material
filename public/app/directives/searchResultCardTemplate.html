@@ -1,0 +1,23 @@
+<div ng-click="goToDetailsPage(page)" class="match-item fp-media-card">
+    <div ng-if="::page.featured" class="corner-badge-wrapper"><div class="corner-badge">Featured</div> </div>
+    <div class="user-avatar"  ng-style="::{'background-image':'url({{page.picture.data.url}})'}" ng-class="{'pull-left':listView}"></div>
+    <div class="avatar-title">
+        <div ng-class="{'row':listView}">
+            <h4 ng-if="!listView" class="pull-right margin-0"> <md-icon class="fa fa-check-circle md-cyan-theme md-primary" ng-show="::page.is_verified"></md-icon><md-tooltip>Facebook Verified Page</md-tooltip></h4>
+            <div ng-class="{'col-sm-4':listView}">
+                <h6 ng-if="!listView">{{::page.name | cut:false:20:' ...'}}</h6>
+                <h6 ng-if="listView">{{::page.name | cut:false:14:' ...'}}</h6>
+                <p class="note">{{::page.category}}</p>
+            </div>
+            <div ng-class="{'col-sm-6':listView}">
+                <h4 ng-if="listView" class="pull-right margin-0"> <md-icon class="fa fa-check-circle md-cyan-theme md-primary" ng-show="::page.is_verified"></md-icon><md-tooltip>Facebook Verified Page</md-tooltip></h4>
+                <b>{{::page.fan_count|number}} likes </b>
+                <p>{{::page.talking_about_count |number}} People Talking About</p>
+                <a class="hide-xsm pull-right" ng-if="listView" target="_blank" title="{{::page.name}}">View Details</a>
+            </div>
+        </div>
+        <hr ng-if="!listView">
+        <a ng-if="!listView" target="_blank" title="{{::page.name}}">View Details
+        </a>
+    </div>
+</div>

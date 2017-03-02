@@ -1,0 +1,76 @@
+<div xmlns="http://www.w3.org/1999/html">
+  <div class="details-page">
+
+    <div class="container">
+      <div class="details-header">
+        <h2 class="details-title">{{campaign.topic}}</h2>
+        <div class="details-budget" ng-show="campaign.type == 'pay' && campaign.budget">
+          <span><span class="section-title-highlight">${{campaign.budget*0.7}}</span> Budget</span>
+          <span ng-show="campaign.payRate"><span class="section-title-highlight">${{campaign.payRate*0.7|number: 2}}</span> per {{campaign.payEventType}}</span>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+    <div class="details-sub-header">
+      <div class="container">
+        <div class="details-author">
+          <a ng-href="#/userDetails?userId={{campaign.userId}}">
+            <img class="img-circle" ng-src="{{ownerPic}}"/>
+            {{ownerName}}
+          </a>
+        </div>
+        <div class="details-img">
+          <img ng-src="{{campaign.thumbnail}}" class=""/>
+        </div>
+        <div class="details-socials">
+          <img class="img-circle social-logo" src="img/FB-f-Logo__blue_512.png">
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="details-content row">
+        <div class="details-requirements col-sm-4">
+          <span class="title text-left">Requirements</span>
+          <div>
+            <span class="badge badge-violet">{{campaign.minAge}}-{{campaign.maxAge}}</span>
+            Age
+          </div>
+          <div>
+            <span class="badge badge-violet">{{campaign.numberOfFollowers}}</span>
+            Min. Followers
+          </div>
+        </div>
+        <div class="details-instruction col-sm-8">
+          <span class="title text-right">Description</span>
+          <p>{{campaign.details}}</p>
+
+          <div class="note" ng-show="campaign.type == 'pay'">
+            <strong>Note: </strong> Simply create content to fulfill the requirements mentioned above, then we will schedule the post for you once the campaign owner accepted your proposal.
+            <br>
+            Go to Status page > My proposal to chat with the campaign owner or check for updates.
+          </div>
+          <div class="note" ng-show="campaign.type !== 'pay'">
+            <strong>Note: </strong> Simply create content to fulfill the requirements mentioned above, then the user will response if he/she wants to proceed to the next step.
+            <br>
+            Go to Status page > My proposal to chat with the campaign owner or check for updates.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="details-buttons">
+  <div class="container">
+    <div class="col-sm-4">
+      <a href="#/campaign" class="btn btn-lg btn-black pull-center">Go Back</a>
+    </div>
+    <div class="col-sm-4">
+      <a href class="btn btn-lg btn-black-fill pull-center" ng-click="openApplyCampaign()" ng-show="!submittedForm" >Apply Campaign</a>
+    </div>
+    <div class="col-sm-4">
+      <a href="#" class="btn btn-lg btn-yellow-fill pull-center">Propose Trade</a>
+    </div>
+  </div>
+</div>

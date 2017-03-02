@@ -1,0 +1,168 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Sent Application</h3>
+    </div>
+    <div class="modal-body">
+        <div class="scrollable-content">
+            <p ng-show="application.status == 'accepted'">Congratulations! Your application has been accepted.
+                Now confirm the details and click to schedule the posts.</p>
+
+            <form class="appForm" role="form">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Application</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <dl ng-show="application.status === 'rejected'">
+                                        <div class="alert alert-warning">The user rejected your application. Please
+                                            revise it according to the user's comments.
+                                        </div>
+                                        <dt>Rejected comments</dt>
+                                        <dd>{{application.rejectMessage}}</dd>
+                                        <hr/>
+                                        <dt>Your reasons</dt>
+                                        <dd>
+        <textarea type="text" ng-model="application.reasons"
+                  class="form-control input" name="reasonsInput"
+                  id="reasonsInput"
+                  placeholder="Enter reasons for the campaign owner to choose you."
+                  required/>
+                                        </dd>
+                                        <hr/>
+                                        <dt>Proposed content</dt>
+                                        <dd>
+        <textarea type="text" ng-model="application.postContent"
+                  class="form-control input" name="contentInput"
+                  id="contentInput"
+                  placeholder="Propose a post for the campaign" required/>
+                                        </dd>
+                                        <hr/>
+                                        <div ng-show="application.imgUrl && application.imgUrl != ''">
+                                            <div class="btn-group">
+                                                <label class="btn btn-yellow" ng-model="imageType"
+                                                       uib-btn-radio="'url'" uncheckable>Enter image URL</label>
+                                                <label class="btn btn-yellow" ng-model="imageType"
+                                                       uib-btn-radio="'file'" uncheckable>Upload an image</label>
+                                            </div>
+                                            <div ng-show="imageType == 'url'" heading="Enter image URL">
+                                                <br><input type="url" ng-model="application.imgUrl"
+                                                           class="form-control input" name="imgInput" id="imgInput"
+                                                           placeholder="Enter an image URL."/>
+                                            </div>
+                                            <div ng-show="imageType == 'file'" heading="Upload an image">
+                                                <br><input name="file" type="file" file/>
+                                            </div>
+                                            <hr/>
+                                        </div>
+                                        <dt>Page to post</dt>
+                                        <dd>
+                                            <select id="pageSelect" class="form-control"
+                                                    ng-model="application.facebookPageId"
+                                                    ng-options="page.id as page.name for page in pageList">
+                                            </select>
+                                        </dd>
+                                        <hr/>
+                                        <dt>Time for you to post</dt>
+                                        <dd>
+                                            <p class="input-group col-md-6">
+                                                <input type="text" class="form-control"
+                                                       uib-datepicker-popup="{{format}}"
+                                                       ng-init="isCalendarOpened=false"
+                                                       ng-model="application.date" ng-init="application.date=''"
+                                                       is-open="isCalendarOpened" min-date="minDate"
+                                                       max-date="maxDate" datepicker-options="dateOptions"
+                                                       ng-required="true" alt-input-formats="altInputFormats"/>
+        <span class="input-group-btn">
+        <button type="button" class="btn btn-yellow"
+                ng-click="isCalendarOpened = !isCalendarOpened"><i
+                class="glyphicon glyphicon-calendar"></i></button>
+        </span>
+                                            </p>
+        <span class="input-group col-md-6">
+        <uib-timepicker ng-model="application.time"
+                        ng-init="application.time =''"></uib-timepicker>
+        </span>
+                                        </dd>
+                                    </dl>
+                                    <dl ng-show="application.status !== 'rejected'">
+                                        <dt>Your reasons</dt>
+                                        <dd>{{application.reasons}}</dd>
+                                        <hr/>
+                                        <dt>Proposed content</dt>
+                                        <dd>{{application.postContent}}</dd>
+                                        <hr/>
+                                        <div ng-show="application.imgUrl && application.imgUrl != ''">
+                                            <dt>Image in the post</dt>
+                                            <dd><img class="img-responsive in-form-img"
+                                                     ng-src="{{application.imgUrl}}"/>
+                                            </dd>
+                                            <hr/>
+                                        </div>
+                                        <dt>Page to post</dt>
+                                        <dd><a ng-href="http://facebook.com/{{application.facebookPageId}}"
+                                               target="_blank">View Page&nbsp;<i class="icon-fb icon sm-"></i></a>
+                                        </dd>
+                                        <hr/>
+                                        <dt>Time for you to post</dt>
+                                        <dd>{{application.actionTime | date:'medium'}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="btn btn-black-fill" ng-show="application.status === 'rejected'"
+                           ng-click="applyAgain(application)">Apply Again</a>
+                    </div>
+                    <div class="col-lg-6" ng-show="!application.socialId && application.socialId != '' && application.status !== 'rejected'">
+                        <div class="form-group">
+                            <div class="panel panel-warning">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">My Request</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <br>
+                                    <dl ng-show="!application.applicantCampaignId || application.applicantCampaignId == ''">
+                                        <dt>My requirements</dt>
+                                        <dd>{{application.requirements}}</dd>
+                                        <hr ng-if="application.status!=='pending'"/>
+                                    </dl>
+                                    <div class="appForm" ng-show="application.applicantCampaignId && application.applicantCampaignId != ''">
+                                        <label>You selected <a target="_blank" ng-href="#/campaignDetails?id={{application.applicantCampaignId}}">this campaign</a> to trade.</label>
+                                        <hr>
+                                    </div>
+                                    <br/>
+                                    <dl ng-if="application.status!=='pending'">
+                                        <dt>Content the user would post</dt>
+                                        <dd>{{application.ownerPostContent}}</dd>
+                                        <hr/>
+                                        <div ng-show="application.ownerImgUrl && application.ownerImgUrl != ''">
+                                            <dt>Image in the post</dt>
+                                            <dd><img class="img-responsive in-form-img" ng-src="{{application.ownerImgUrl}}"/>
+                                            </dd>
+                                            <hr/>
+                                        </div>
+                                        <dt>Time the user would post</dt>
+                                        <dd>{{application.ownerActionTime | date:'medium'}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <br/>
+                        </div>
+                        <div ng-show="application.status=='pending'" class="alert alert-warning">
+                            Waiting for campaign owner approval.
+                        </div>
+                        <div ng-show="application.status=='accepted'">
+                            <label>Click this button to schedule all posts involved and close the trade.</label>
+                            <a class="btn btn-facebook pull-right"
+                               ng-click="applicantSchedulePosts(application)"><span
+                                    class="icon icon-fb"></span>&nbsp;Agree to post on Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Response to Offer
+
+            <div class="btn-group pull-right">
+                <button class="btn btn-yellow-fill" ng-show="selectedMatching.application.status == 'matching' || selectedMatching.application.status == 'rejected'" ng-click="responseToWave()">Send</button>
+                <!--<button class="btn btn-lightgray-fill"  ng-click="close()">Close</button>-->
+            </div>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="scrollable-content">
+            <form class="appForm" role="form">
+                <div class="col-lg-6" ng-show="selectedMatching.application.status == 'matching' || selectedMatching.application.status == 'rejected'">
+
+                    <div class="form-group">
+                        <label>Content you will post</label>
+
+                        <div class="input-group col-lg-10">
+                            <textarea type="text" ng-model="selectedMatching.application.postContent"
+                                      class="form-control input" name="contentInput" id="contentInput"
+                                      placeholder="Propose a post for the campaign" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Selected page to post</label>
+
+                        <div class="input-group col-lg-10">
+                            <a ng-href="http://facebook.com/{{selectedMatching.application.facebookPageId}}"
+                               target="_blank">View Page&nbsp;<i class="icon-fb icon sm-"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image on your post(optional)</label>
+
+                        <div class="input-group col-lg-10">
+                            <div class="btn-group">
+                                <label class="btn upload-button" ng-model="imageType" uib-btn-radio="'url'"
+                                       uncheckable active>
+                                    <i class="fa fa-external-link"></i> Enter image URL</label>
+                                <label class="btn upload-button" ng-model="imageType" uib-btn-radio="'file'"
+                                       uncheckable>
+                                    <i class="fa fa-upload"></i> Upload an image</label>
+                            </div>
+                            <div ng-show="imageType == 'url'" heading="Enter image URL">
+                                <br><input type="url" ng-model="selectedMatching.application.imgUrl"
+                                           class="form-control input" name="imgInput" id="imgInput"
+                                           placeholder="Enter an image URL."/>
+                            </div>
+                            <div ng-show="imageType == 'file'" heading="Upload an image">
+                                <br><input name="file" type="file" file/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Date and time you will post</label>
+
+                        <p class="input-group col-md-6">
+                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                   ng-init="isCalendarOpened=false"
+                                   ng-model="selectedMatching.application.date"
+                                   ng-init="selectedMatching.application.date=''" is-open="isCalendarOpened"
+                                   min-date="minDate" max-date="maxDate" datepicker-options="dateOptions"
+                                   ng-required="true" alt-input-formats="altInputFormats"/>
+
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-yellow"
+                                        ng-click="isCalendarOpened = !isCalendarOpened"><i
+                                        class="fa fa-calendar"></i></button>
+                            </span>
+                        </p>
+                        <span class="input-group col-md-6">
+                            <uib-timepicker ng-model="selectedMatching.application.time"></uib-timepicker>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-6" ng-show="selectedMatching.application.status == 'pending'">
+                    <dt>My reasons</dt>
+                    <dd>{{selectedMatching.application.reasons}}</dd>
+                    <hr/>
+                    <dt>Proposed content</dt>
+                    <dd>{{selectedMatching.application.postContent}}</dd>
+                    <hr/>
+                    <div ng-show="selectedMatching.application.imgUrl && selectedMatching.application.imgUrl != ''">
+                        <dt>Image in the post</dt>
+                        <dd><img class="img-responsive in-form-img"
+                                 ng-src="{{selectedMatching.application.imgUrl}}"/>
+                        </dd>
+                        <hr/>
+                    </div>
+                    <dt>Page to post</dt>
+                    <dd><a ng-href="http://facebook.com/{{selectedMatching.application.facebookPageId}}"
+                           target="_blank">View Page&nbsp;<i class="icon-fb icon sm-"></i></a>
+                    </dd>
+                    <hr/>
+                    <dt>Time for you to post</dt>
+                    <dd>{{selectedMatching.application.actionTime | date:'medium'}}</dd>
+                </div>
+                <div class="col-lg-6 well">
+                    <div class="form-group">
+                        <a ng-href="#/campaignDetails?id={{selectedMatching.campaignId}}" target="_blank"><h3>
+                            {{selectedMatching.topic}}</h3></a>
+                        <dl>
+                            <dt>Description</dt>
+                            <dd>{{selectedMatching.details}}</dd>
+                            <hr/>
+                            <dt>Minimum Followers</dt>
+                            <dd>{{selectedMatching.numberOfFollowers}}</dd>
+                            <hr/>
+                            <dt>You'll get paid for:</dt>
+                            <dd>$0.05 @click, $2 @install, $0.015 @view</dd>
+                        </dl>
+                    </div>
+                    <div ng-show="selectedMatching.application.status=='pending'" class="alert alert-warning">
+                        Waiting for campaign owner approval.
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

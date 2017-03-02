@@ -1,0 +1,26 @@
+{
+  "FACEBOOK_CALLBACK_URL": "https://dashboard.famepick.com/auth/facebook/callback",
+  "INSTAGRAM_CALLBACK_URL": "https://dashboard.famepick.com/auth/instagram/callback",
+  "FACEBOOK_ID": "169497543408638",
+  "FACEBOOK_SECRET": "14bdcb16abd2f877dbd98294f06a7c9e",
+  "LAMBDA_ENDPOINT": "https://api.famepick.com/prod",
+  "LAMBDA_KEY": "s0JG9lfqDL3dVkImZmA2i5PxvNmhaTK35RBNEkFW",
+  "SCHEDULER_SERVER": "http://famepick-agenda.elasticbeanstalk.com",
+  "TWITTER_CALLBACK_URL": "https://dashboard.famepick.com/auth/twitter/callback",
+  "GOOGLE_CALLBACK_URL": "https://dashboard.famepick.com/auth/google/callback",
+  "LINKEDIN_CALLBACK_URL": "https://dashboard.famepick.com/auth/linkedin/callback",
+  "STRIPE_SKEY": "sk_live_3SLvRfxH1pzt54grF2giI1dL",
+  "STRIPE_PKEY": "pk_live_om6abK9d0zmbf7lAkSX1mhyt",
+  "GOOGLE_ID": "350923458039-f6da8g1jusu3303ro12327qrofvsas1c.apps.googleusercontent.com",
+  "GOOGLE_SECRET": "p6oVFnLM7Te4HhGkc5e3Qvn1",
+  "PIPEDRIVE_API_KEY": "553bb851a3d7ece42e2515f8ee675fa13eee27ef",
+  "PIPEDRIVE_PIPELINE_ID": 8,
+  "PIPEDRIVE_SIGNEDIN_STAGE_ID": 40,
+  "PIPEDRIVE_APPROVED_STAGE_ID": 41,
+  "PIPEDRIVE_ACTIVE_STAGE_ID": 42,
+  "PIPEDRIVE_CELEBRITY_PIPELINE_ID": 2,
+  "PIPEDRIVE_PERSONID_FIELD_ID": 12448,
+  "PIPEDRIVE_STAGEID_FIELD_ID": 12449,
+  "PIPEDRIVE_CELEBRITY_USED_ID": 12499
+
+}

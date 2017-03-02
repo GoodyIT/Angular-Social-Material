@@ -1,0 +1,89 @@
+<section>
+    <div class="container featured-bar">
+        <div class="row">
+            <div class="section-title-row">
+                <h4 class="section-title"><span class="section-title-highlight">My</span> Campaigns
+                </h4>
+                <div class="pull-right">
+                    <select class="form-control" ng-change="filterChanged()" ng-model="filter"
+                            ng-options="filter.value as filter.label for filter in filters">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section">
+    <div class="container">
+        <!-- Loading -->
+        <div ng-show="refreshing">
+            Loading..
+        </div>
+
+        <!-- No campaign -->
+        <div class="well" ng-show="refreshing===false && campaignList.length < 1">
+            <p >
+                No campaign with status {{filter}}.<br/>
+            </p>
+        </div>
+
+        <!-- Campaign List -->
+        <div ng-show="refreshing===false && campaignList.length > 0" class="row">
+            <div ng-repeat="campaign in campaignList"
+                 class="col-md-3 bootcards-cards card-placeholder">
+                <div class=" bootcards-media fp-media-card fp-request-card">
+
+                    <div class="panel panel-default">
+                        <img src="img/FB-f-Logo__blue_512.png" class="img-circle logo center-block">
+
+                        <div class="panel-heading text-center">
+                            <div class="card-description">
+                                <h3>{{campaign.topic}}</h3>
+
+                                <div class="card-description-content">
+                                    {{campaign.details}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <img ng-src="{{campaign.thumbnail}}"
+                             class="img-responsive card-thumbnail"/>
+
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <strong>REQUIREMENTS</strong><br/>
+                                    <strong>AGE</strong>: {{campaign.minAge}}-{{campaign.maxAge}}<br/>
+                                    <strong>FOLLOWERS</strong>: {{campaign.numberOfFollowers}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <button
+                                            ng-click="showCampaignStatus(campaign)"
+                                            class="btn btn-lightgray-fill">Details</button>
+                                </div>
+                                <div class="col-lg-3">
+                                    <button ng-if="campaign.status == 'pending'"
+                                            ng-click="deleteCampaign(campaign)"
+                                            class="btn btn-white-fill">
+                                        <i class="fa fa-trash-o fa-2x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+        </div>
+
+    </div>
+</section>
+

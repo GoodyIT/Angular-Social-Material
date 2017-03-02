@@ -1,0 +1,239 @@
+<div class="container">
+    <div class="page-title" ng-if="!(isCheckoutAudience && $root.audience)">
+        <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+        <h2 class="pull-left">&nbsp;PLAN SELECTION</h2>
+    </div>
+    <br>
+    <div ng-switch="currentView">
+        <div ng-switch-when="0" class="animated-slide" ng-class="{'to-left':currentView===0, 'to-right':currentView > 0}">
+            <div ng-if="isCheckoutAudience && $root.audience">
+                <a ng-href="#/buildAudience?pageId={{$root.audience.pageId}}"><h5><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Modify audience set</h5></a>
+                <br>
+                <h2>Custom Audience Checkout</h2>
+                <br>
+                <md-card>
+                    <md-card-content>
+                        <h4>Custom Audience Set :&nbsp;<b>{{$root.audience.name}}</b></h4>
+                        <br>
+                        <md-card md-colors="::{ background: 'blue-grey-50' }">
+                            <md-card-content>
+                                <div>
+                                    <ul>
+                                        <li ng-repeat="attr in $root.audience.audienceAttrs"><h5>{{attr.category}}: {{attr.label}}<span class="pull-right">${{attr.price || 0}}</span> </h5></li>
+                                    </ul>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <br>
+                        <hr>
+                        <h4 class="margin-10">Total: <span class="pull-right">${{$root.audience.totalPrice}}<span ng-if="user.profile.membership === 1 || user.profile.membership === 2">(with current subscription)</span></span>
+                            <span ng-if="!user.profile.membership">(with enrollment below)</span>
+                        </h4>
+                        <md-button class="md-raised md-primary pull-right" ng-if="user.profile.membership === 1 || user.profile.membership === 2" ng-click="submitAudience()" aria-label="flat button">Submit Audience Set</md-button>
+
+                    </md-card-content>
+                </md-card>
+
+                <div ng-if="!user.profile.membership">
+                    <br>
+                    <hr>
+                    <br>
+                    <h3>Enroll in one of the paid plan to target your audience.</h3>
+                </div>
+            </div>
+            <div ng-if="!(isCheckoutAudience && $root.audience && (user.profile.membership === 1 || user.profile.membership === 2))">
+                <div layout="row" layout-xs="column" layout-align="space-around center" layout-margin>
+                    <!--<tri-widget flex>-->
+                        <!--<div palette-background="white:100">-->
+                            <!--<h4 palette-background="grey:200" class="margin-0 text-center padding-10">Basic</h4>-->
+                            <!--<div class="layout-padding">-->
+                                <!--<br>-->
+                                <!--<h2>Free</h2>-->
+                                <!--<p>Access to see insight of celebrities page.</p>-->
+                                <!--<br>-->
+                                <!--<br>-->
+                                <!--<div class="text-center">-->
+                                    <!--<md-button class="md-flat margin-0 full-width md-accent" ng-if="!user.profile.membership" aria-label="flat button">Your current plan</md-button>-->
+                                    <!--<md-button class="md-flat margin-0 full-width md-accent" ng-if="user.profile.membership === 1 || user.profile.membership === 2 " aria-label="flat button">Included in your plan</md-button>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</tri-widget>-->
+                    <tri-widget flex>
+                        <div palette-background="white:100">
+                            <h4 palette-background="grey:200" class="margin-0 text-center padding-10">Startup</h4>
+                            <div class="layout-padding">
+                                <br>
+                                <h2>$499<small>/mo</small></h2>
+                                <!--<p>Fully access to campaign performance data of celebrities.</p>-->
+                                <ul class="pricing-list">
+                                    <li>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full access to our social celebrity database</p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;One custom audience </p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full audience analysis including expected performance</p>
+                                    </li>
+                                </ul>
+                                <br>
+                                <br>
+                                <div class="text-center">
+                                    <md-button class="md-raised margin-0 full-width md-primary" ng-if="user.profile.membership !== 1" ng-click="switchPage(1, 1)" aria-label="flat button">Choose this plan</md-button>
+                                    <md-button class="md-flat margin-0 full-width md-accent" ng-if="user.profile.membership === 1" aria-label="flat button">Your current plan</md-button>
+                                </div>
+                            </div>
+                        </div>
+                    </tri-widget>
+                    <tri-widget flex>
+                        <div palette-background="white:100">
+                            <h4 palette-background="amber:400" class="margin-0 text-center padding-10">Small Business</h4>
+                            <div class="layout-padding">
+                                <br>
+                                <h2>$899<small>/mo</small></h2>
+                                <!--<p>Have FamePick celebrities to endorse your products in campaign.</p>-->
+                                <ul class="pricing-list">
+                                    <li>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full access to our social celebrity database</p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Two custom audience </p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full audience analysis including expected performance</p>
+                                    </li>
+                                </ul>
+                                <br>
+                                <br>
+                                <div class="text-center">
+                                    <md-button class="md-raised margin-0 full-width md-primary" ng-if="user.profile.membership !== 2" ng-click="switchPage(1, 2)" aria-label="flat button">Choose this plan</md-button>
+                                    <md-button class="md-flat margin-0 full-width md-accent" ng-if="user.profile.membership === 2" aria-label="flat button">Your current plan</md-button>
+                                </div>
+                            </div>
+                        </div>
+                    </tri-widget>
+                    <tri-widget flex>
+                        <div palette-background="white:100">
+                            <h4 palette-background="grey:200" class="margin-0 text-center padding-10">Enterprise</h4>
+                            <div class="layout-padding">
+                                <br>
+                                <h2>$1,399<small>/mo</small></h2>
+                                <!--<p>Have FamePick celebrities to endorse your products in campaign.</p>-->
+                                <ul class="pricing-list">
+                                    <li>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full access to our social celebrity database</p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Three custom audience </p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Full audience analysis including expected performance</p>
+                                        <p><i class="fa text-yellow fa-check"></i>&nbsp;Premium Support</p>
+                                    </li>
+                                </ul>
+                                <div class="text-center">
+                                    <md-button class="md-raised margin-0 full-width md-primary" ng-if="user.profile.membership !== 2" ng-click="switchPage(1, 3)" aria-label="flat button">Choose this plan</md-button>
+                                    <md-button class="md-flat margin-0 full-width md-accent" ng-if="user.profile.membership === 2" aria-label="flat button">Your current plan</md-button>
+                                </div>
+                            </div>
+                        </div>
+                    </tri-widget>
+                </div>
+            </div>
+        </div>
+        <div ng-switch-when="1" class="animated-slide" ng-class="{'to-right':currentView===1, 'to-left':currentView !== 1}">
+            <a href ng-click="switchPage(0, null)"><h5><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back to Pricing</h5></a>
+            <h3>Payment Method</h3>
+            <br>
+            <form class="form-horizontal" name="payment" novalidate>
+                <md-card flex>
+                    <md-card-content>
+                        <md-input-container class="md-block" >
+                            <md-icon md-font-icon="fa fa-check-square-o"></md-icon>
+                            <input type="text" placeholder="Plan Selected" value="{{PLAN[selectedPlan].name}} Plan" disabled>
+                        </md-input-container>
+                        <div class="row">
+                            <div class="col-md-5 col-lg-4">
+                                <md-input-container class="md-block">
+                                    <md-icon md-font-icon="fa fa-credit-card-alt"></md-icon>
+                                    <input type="text" ng-model="card.number" id="cardNo" required
+                                           placeholder="Credit card number"
+                                           value="">
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-3">
+                                <md-input-container class="md-block">
+                                    <input type="text" ng-model="card.cvc" id="cvv" placeholder="CVC" required>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 col-lg-3">
+                                <md-input-container class="md-block">
+                                    <md-icon md-font-icon="fa fa-calendar"></md-icon>
+                                    <md-select ng-model="card.exp_month" placeholder="Expiration Month"  required>
+                                        <md-option ng-value="month.value" ng-repeat="month in expiryMonths track by month.value">{{month.label}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                            <div class="col-md-5 col-lg-3">
+                                <md-input-container class="md-block">
+                                    <md-select ng-model="card.exp_year" placeholder="Expiration Year" required>
+                                        <md-option ng-value="year" ng-repeat="year in expiryYears track by year">{{year}}</md-option>
+                                    </md-select>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+
+                <!--<div class="form-group">-->
+                <!--<label class="col-sm-2 control-label">Plan Selected</label>-->
+
+                <!--<div class="col-sm-10">-->
+                <!--{{PLAN[selectedPlan].name}}-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                <!--<label class="col-sm-2 control-label" for="cardNo">Card Number</label>-->
+
+                <!--<div class="col-sm-10">-->
+                <!--<input class="form-control" type="text" ng-model="card.number" id="cardNo" required-->
+                <!--placeholder="Credit card number"-->
+                <!--value="">-->
+                <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                <!--<label class="col-sm-2 control-label" for="cvc">CVC</label>-->
+
+                <!--<div class="col-sm-2">-->
+                <!--<input class="form-control" type="text" ng-model="card.cvc" id="cvv" placeholder="CVC" required>-->
+
+                <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="form-group">-->
+                <!--<label class="col-sm-2 control-label" for="expiration">Expiration</label>-->
+
+                <!--<div class="col-sm-4">-->
+                <!--<div class="row">-->
+                <!--<div class="col-sm-4">-->
+                <!--<select ng-model="card.exp_month" class="form-control col-sm-2" name="expMonth" id="expMonth"-->
+                <!--ng-options="month.value as month.label for month in expiryMonths track by month.value" required></select>-->
+                <!--</div>-->
+                <!--<div class="col-sm-1">/</div>-->
+                <!--<div class="col-sm-4">-->
+                <!--<select ng-model="card.exp_year" class="form-control col-sm-2" name="expYear" id="expYear"-->
+                <!--ng-options="year as year for year in expiryYears track by year" required></select>-->
+                <!--</div>-->
+                <!--</div>-->
+                <!--</div>-->
+
+                <!--</div>-->
+
+                <div class="pull-right">
+                    <a ng-disabled="updateBillingStatus == 'Processing'" class=" md-button" ng-click="switchPage(0, null)">Cancel</a>
+                    <md-button class="md-primary md-raised" ng-click="submitPayment()"
+                               ng-if="!isCheckoutAudience" ng-disabled="payment.$invalid">Submit Payment
+                    </md-button>
+                    <md-button class="md-primary md-raised" ng-click="submitPayment()"
+                               ng-if="isCheckoutAudience" ng-disabled="payment.$invalid">Submit Payment & Custom Audience Set
+                    </md-button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</div>

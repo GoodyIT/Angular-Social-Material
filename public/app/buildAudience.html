@@ -1,0 +1,261 @@
+<div class="container">
+    <a ng-href="#/celebDetails?pageId={{pageId}}"><h5><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;Back to details of {{$root.currentCelebPage.name}}</h5></a>
+    <br>
+    <div class="page-title">
+        <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+        <h2 class="pull-left">CUSTOM AUDIENCE BUILDER</h2>
+    </div>
+    <br>
+    <div class="show-xsm card">
+        <div class="card-block">
+            <p>Building audience on small screen devices is not supported.</p>
+        </div>
+    </div>
+    <div class="hide-xsm">
+        <div class="row">
+            <div class="col-xs-7">
+                <h4>Name of Audience Set</h4>
+                <input class="form-control" ng-model="$root.audience.name" placeholder="Give a name to your custom audience set." required/>
+                <br>
+                <br>
+            </div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-4">
+                <md-button class="md-accent md-raised full-width"><h5 class="margin-20">${{totalPrice}} </h5></md-button>
+                <!--<md-button class="md-accent md-raised full-width"><h5 class="margin-20">${{totalPrice}} <span ng-if="!user.profile.membership">(with subsciption)</span></h5></md-button>-->
+            </div>
+        </div>
+        <div ng-switch="currentView" class="">
+            <div ng-switch-when="0"  ng-class="transitionClass">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h4>Audience Attributes</h4>
+                        <md-card style="min-height: 246px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">Campaign Type</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <div class="col-xs-4" ng-repeat="item in options['Campaign Type']"  data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="options['Campaign Type']" jqyoui-draggable="{index: $index,animate:true}">
+                                        <md-button palette-background="cyan:400" class="col-xs-12 md-raised button-bullet" href><h5 class="margin-20">{{item.label}}</h5></md-button>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <br>
+                        <md-card style="min-height: 246px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">Product Type</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <md-tabs class="col-xs-12 md-dynamic-height" md-selected="selectedTabIndex" >
+                                        <md-tab ng-repeat="cat in options['Product Type']" label="{{cat.name}}">
+                                            <div class="md-content">
+                                                <div class="md-padding">
+
+                                                    <div class="row ">
+                                                        <div class="col-xs-4" ng-repeat="subCat in cat.subCats"  data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="cat.subCats" jqyoui-draggable="{index: $index,animate:true}">
+                                                            <md-button palette-background="pink:400" class="col-xs-12 md-raised button-bullet" href><h7 class="margin-top-10">{{subCat.label}}</h7></md-button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </md-tab>
+                                    </md-tabs>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                    <div class="col-xs-6" >
+                        <h4>Your Custom Audience</h4>
+                        <div style="min-height:700px;" class="card -draggable" ng-class="{'dashed-border': items2.length < 1}" data-drop="true" ng-model='items2' data-jqyoui-options jqyoui-droppable="{multiple:false, onDrop: 'onDrop'}">
+                            <div ng-if="items2.length < 1" ><div class="centered-text"><h4>Drag & Drop audience attributes here</h4></div></div>
+                            <div ng-if="items2.length > 0" class="card-block">
+                                <div>
+                                    <h5>Campaign Type:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-4" ng-repeat="item in items2" ng-show="item.category === 'Campaign Type'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button palette-background="cyan:400" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h5 class="margin-top-10">{{item.label}}</h5></md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div>
+                                    <h5>Product Type:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-4" ng-repeat="item in items2" ng-show="item.category === 'Product Type'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button palette-background="pink:400" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h7 class="margin-top-10">{{item.cat}}<div>{{item.label}}</div></h7></md-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <md-button class="md-primary md-raised" ng-click="nextStep();"  ng-disabled="items2.length < 1 || !$root.audience.name">Next</md-button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="1" ng-class="transitionClass">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h4>Audience Attributes</h4>
+                        <md-card style="min-height: 322px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">Age</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <div class="col-xs-4" ng-repeat="item in options['Age']" ng-show="item.label" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="options['Age']" jqyoui-draggable="{index: $index,animate:true}">
+                                        <md-button palette-background="cyan:400" class="col-xs-12 md-raised button-bullet" href><h5 class="margin-20">{{item.label}}</h5></md-button>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <br>
+                        <md-card style="min-height: 170px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">Gender</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <div class="col-xs-6" ng-repeat="item in options['Gender']" ng-show="item.label" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="options['Gender']" jqyoui-draggable="{index: $index,animate:true}">
+                                        <md-button palette-background="pink:400" class="col-xs-12 md-raised button-bullet" href><h5 class="margin-20">{{item.label}}</h5></md-button>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <br>
+                        <md-card style="min-height: 322px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">Location</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <div class="col-xs-6" ng-repeat="item in options['Location']" ng-show="item.label" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="options['Location']" jqyoui-draggable="{index: $index,animate:true}">
+                                        <md-button palette-background="green:400" class="col-xs-12 md-raised button-bullet" href><h5 class="margin-20">{{item.label}}</h5></md-button>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                    <div class="col-xs-6" >
+                        <h4>Your Custom Audience</h4>
+                        <div style="min-height:892px;" class="card -draggable" ng-class="{'dashed-border': items2.length < 1}" data-drop="true" ng-model='items2' data-jqyoui-options  jqyoui-droppable="{multiple:true, onDrop: 'onDrop'}">
+                            <div ng-if="items2.length < 1" ><div class="centered-text"><h4>Drag & Drop audience attributes here</h4></div></div>
+                            <div ng-if="items2.length > 0" class="card-block">
+                                <div>
+                                    <h5>Age:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-4" ng-repeat="item in items2" ng-show="item.category === 'Age'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button palette-background="cyan:400" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h6 class="margin-top-10">{{item.cat}}<div>{{item.label}}</div></h6></md-button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div>
+                                    <h5>Gender:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-4" ng-repeat="item in items2" ng-show="item.category === 'Gender'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button palette-background="pink:400" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h6 class="margin-top-10">{{item.cat}}<div>{{item.label}}</div></h6></md-button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div >
+                                    <h5>Location:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-4" ng-repeat="item in items2" ng-show="item.category === 'Location'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button palette-background="green:400" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h6 class="margin-top-10">{{item.cat}}<div>{{item.label}}</div></h6></md-button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <md-button ng-disabled="updateBillingStatus == 'Processing'"
+                                    class="md-accent md-raised" ng-click="prevStep();">Back
+                            </md-button>
+                            <md-button class="md-primary md-raised" ng-click="nextStep();"  ng-disabled="items2.length < 1 || !$root.audience.name">Next</md-button>
+                            </md-button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div ng-switch-when="2" ng-class="transitionClass">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h4>Audience Attributes</h4>
+                        <md-card style="min-height: 533px;">
+                            <md-card-header md-colors="::{ background: 'grey-100' }">
+                                <md-card-header-text >
+                                    <span class="md-title">User Characteristics</span>
+                                </md-card-header-text>
+                            </md-card-header>
+                            <md-card-content>
+                                <div class="row">
+                                    <div class="col-xs-12" ng-repeat="item in options['User Characteristics']" ng-show="item.label" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="options['User Characteristics']" jqyoui-draggable="{index: $index,animate:true}">
+                                        <md-button md-colors="::{ background: 'primary', color: 'white' }" class="col-xs-12 md-raised button-bullet" href><h5 class="margin-20">{{item.label}}&nbsp;(${{item.price}})</h5></md-button>
+                                    </div>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                    <div class="col-xs-6" >
+                        <h4>Your Custom Audience</h4>
+                        <div style="min-height:536px;" class="card -draggable" ng-class="{'dashed-border': items2.length < 1}" data-drop="true" ng-model='items2' data-jqyoui-options  jqyoui-droppable="{multiple:true, onDrop: 'onDrop'}">
+                            <div ng-if="items2.length < 1" ><div class="centered-text"><h4>Drag & Drop audience attributes here</h4></div></div>
+                            <div ng-if="items2.length > 0" class="card-block">
+                                <div>
+                                    <h5>User Characteristics:</h5>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-xs-12" ng-repeat="item in items2" ng-show="item.category === 'User Characteristics'" data-drag="true" data-jqyoui-options="{revert: 'invalid'}" ng-model="items2" jqyoui-draggable="{index: $index,animate:true}">
+                                            <md-button md-colors="::{ background: 'primary', color: 'white' }" class="col-xs-12 md-raised button-bullet" href><a class="fa fa-times close-btn pull-right" href ng-click="removeAttribute($index, item)"></a><h6 class="margin-top-10">{{item.cat}}<div>{{item.label}}</div></h6></md-button>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <md-button ng-disabled="updateBillingStatus == 'Processing'"
+                                    class="md-accent md-raised" ng-click="prevStep();">Back
+                            </md-button>
+                            <md-button class="md-primary md-raised" ng-click="checkoutAudience()"
+                                    ng-disabled="items2.length < 1">Done
+                            </md-button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+</div>

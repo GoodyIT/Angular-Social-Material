@@ -1,0 +1,472 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Received Applications
+
+            <div class="btn-group pull-right">
+                <button class="btn btn-yellow-fill btn-white-text"
+                   ng-show="campaign.type === 'pay'"  ng-click="findMatching(campaign)">Find Matching</button>
+                <button class="btn btn-lightgray-fill" ng-click="close()">Close</button>
+            </div>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div ng-show="applications.length==0">
+            <div class="empty-content-message">
+                No applicant for this campaign.
+            </div>
+        </div>
+        <div class="row"  ng-show="applications.length>0">
+            <div class="col-md-3">
+                <div class="list-group applicant-list">
+
+                    <a ng-click="selectApplication(applicant)" class="list-group-item"
+                       ng-class="{active: activeApplication.applicationId === applicant.applicationId}"
+                       ng-repeat="applicant in applications">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="user-avatar-placeholder">
+                                    <i ng-show="applicant.status=='accepted'"
+                                       class="user-avatar-overlay fa fa-calendar"></i>
+                                    <i ng-show="applicant.status=='matching'"
+                                       class="user-avatar-overlay fa fa-hand-paper-o"></i>
+                                    <i ng-show="applicant.status=='pending' && applicant.socialId"
+                                       class="user-avatar-overlay fa fa-hand-paper-o"></i>
+                                    <i ng-show="applicant.status=='pending' && applicant.socialId"
+                                       class="user-avatar-overlay fa fa-hand-paper-o"></i>
+                                    <i ng-show="applicant.status == 'scheduled'||applicant.status == 'completed'"
+                                       class="user-avatar-overlay fa fa-check"></i>
+
+                                    <famepick-user-info kind='avatar' userid='applicant.userId'/>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <strong class="list-group-item-heading">
+                                    <famepick-user-info kind='fullname' userid='applicant.userId'/>
+                                </strong>
+
+                                <p ng-show="applicant.status=='accepted'" class="application-status">
+                                    Waiting applicant to schedule the posts.</p>
+
+                                <p ng-show="applicant.status=='matching'" class="application-status">
+                                    Waiting for applicant response.</p>
+
+                                <p ng-show="applicant.status=='pending' && applicant.socialId"
+                                   class="application-status">
+                                    Responded to your wave.</p>
+
+                                <p ng-show="applicant.status == 'scheduled'||applicant.status == 'completed'"
+                                   class="application-status">
+                                    Completed.</p>
+
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-9">
+
+                <!-- Detail -->
+                <div ng-show="activeApplication.status && activeApplication.status==='matching'">
+                    <div class="well">Waved to user. Waiting for the user to response.</div>
+                </div>
+
+                <div class="applicant-detail" ng-show="activeApplication.status && activeApplication.status!=='matching'">
+                    <form role="form">
+                        <div class="col-lg-6">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">My Campaign</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <dl ng-show="campaign.type !== 'pay'">
+                                            <dt>Applicant's qualifications</dt>
+                                            <dd>{{activeApplication.reasons}}</dd>
+                                            <hr/>
+                                            <dt>Proposed content</dt>
+                                            <dd>{{activeApplication.postContent}}</dd>
+                                            <hr/>
+                                            <div ng-show="activeApplication.imgUrl && activeApplication.imgUrl != ''">
+                                                <dt>Image in the post</dt>
+                                                <dd><img class="img-responsive in-form-img" ng-src="{{activeApplication.imgUrl}}"/>
+                                                </dd>
+                                                <hr/>
+                                            </div>
+                                            <dt>Time to Post</dt>
+                                            <dd>{{activeApplication.actionTime | date:'medium'}}</dd>
+                                        </dl>
+                                        <dl ng-show="campaign.type == 'pay'">
+                                            <dt>Proposed content</dt>
+                                            <dd>{{activeApplication.postContent}}</dd>
+                                            <hr/>
+                                            <div ng-show="activeApplication.imgUrl && activeApplication.imgUrl != ''">
+                                                <dt>Image in the post</dt>
+                                                <dd><img class="img-responsive in-form-img" ng-src="{{activeApplication.imgUrl}}"/>
+                                                </dd>
+                                                <hr/>
+                                            </div>
+                                            <dt>Time to Post</dt>
+                                            <dd>{{activeApplication.actionTime | date:'medium'}}</dd>
+                                            <hr/>
+                                            <dt>Page to post</dt>
+                                            <dd><a ng-href="http://facebook.com/{{activeApplication.facebookPageId}}"
+                                                   target="_blank">View Page&nbsp;<i class="fa fa-facebook"></i></a>
+                                            </dd>
+                                        </dl>
+                                        <a class="btn btn-facebook btn-block  btn-social"
+                                           ng-show="campaign.type == 'pay' && activeApplication.status=='pending'"
+                                           ng-click="ownerSchedulePaidPost(activeApplication)">
+                                            <i class="fa fa-facebook"></i>&nbsp;Schedule to post on Facebook</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6" ng-show="campaign.type !== 'pay'">
+                            <div class="form-group">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Applicant's request</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <dl ng-if="!activeApplication.applicantCampaignId || activeApplication.applicantCampaignId == ''">
+                                            <dt>Applicant's requirements</dt>
+                                            <dd>{{activeApplication.requirements}}</dd>
+                                            <hr/>
+                                        </dl>
+                                        <div class="appForm" ng-if="activeApplication.applicantCampaignId && activeApplication.applicantCampaignId != ''">
+                                            <p>Propose a Facebook post per the requirements in
+                                                <a target="_blank"
+                                                   ng-href="#/campaignDetails?id={{activeApplication.applicantCampaignId}}">this
+                                                    campaign</a>.</p>
+                                            <hr/>
+                                        </div>
+                                        <div ng-if="activeApplication.status == 'pending'">
+                                            <label>Content you will post on Facebook:</label>
+
+                                            <div class="input-group col-lg-8">
+                                                <textarea
+                                                        ng-if="!activeApplication.applicantCampaignId || activeApplication.applicantCampaignId == ''"
+                                                        type="text" ng-model="activeApplication.ownerPostContent"
+                                                        class="form-control input"
+                                                        placeholder="Propose a Facebook post per user's requirements"
+                                                        required/>
+                                                <textarea
+                                                        ng-if="activeApplication.applicantCampaignId && activeApplication.applicantCampaignId != ''"
+                                                        type="text" ng-model="activeApplication.ownerPostContent"
+                                                        class="form-control input"
+                                                        placeholder="Propose a Facebook post for the user's campaign"
+                                                        required/>
+                                            </div>
+                                            <hr/>
+                                            <label>Image on your post(optional)</label>
+                                            <div class="input-group col-lg-10">
+                                                <div class="btn-group">
+                                                    <label class="btn upload-button" ng-model="image.type"
+                                                           uib-btn-radio="'url'" uncheckable>Enter image URL</label>
+                                                    <label class="btn upload-button" ng-model="image.type"
+                                                           uib-btn-radio="'file'" uncheckable>Upload an image</label>
+                                                </div>
+                                                <div ng-show="image.type == 'url'" heading="Enter image URL">
+                                                    <br><input ng-model="activeApplication.ownerImgUrl" id="imgUrl"
+                                                               placeholder="Enter an image URL to show in your post."
+                                                               type="url"/>
+                                                </div>
+                                                <div ng-show="image.type == 'file'" heading="Upload an image">
+                                                    <br><input name="file" type="file" file="image"/>
+                                                </div>
+                                            </div>
+                                            <hr/>
+                                            <label ng-show="pageList.length > 0" for="pageSelect">Page to post</label>
+
+                                            <div ng-show="pageList.length > 0" class="input-group col-lg-10">
+                                                <select id="pageSelect" ng-model="activeApplication.ownerFacebookPageId"
+                                                        ng-options="page.id as page.name for page in pageList">
+                                                </select>
+                                            </div>
+                                            <div ng-show="pageList.length < 1"><p class="alert alert-info">You need to
+                                                have a Facebook Page to apply.</p></div>
+                                        </div>
+                                        <label ng-if="activeApplication.status=='pending'">Enter a time you will post
+                                            this</label>
+
+                                        <p ng-if="activeApplication.status=='pending'" class="input-group col-md-8">
+                                            <input type="text" class="form-control" uib-datepicker-popup="{{format}}"
+                                                   ng-init="activeApplication.isCalendarOpened=false"
+                                                   ng-model="activeApplication.date"
+                                                   ng-init="activeApplication.date=''"
+                                                   is-open="activeApplication.isCalendarOpened"
+                                                   min-date="minDate" max-date="maxDate"
+                                                   datepicker-options="dateOptions" ng-required="true"
+                                                   alt-input-formats="altInputFormats"/>
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default"
+                                                                ng-click="activeApplication.isCalendarOpened = !activeApplication.isCalendarOpened">
+                                                            <i class="glyphicon glyphicon-calendar"></i></button>
+                                                    </span>
+                                        </p>
+                                        <uib-timepicker ng-show="activeApplication.status=='pending'"
+                                                        ng-model="activeApplication.time"
+                                                        ng-init="activeApplication.time = ''"></uib-timepicker>
+                                        <dl ng-if="activeApplication.status !== 'pending'">
+                                            <dt>Content you will post on Facebook</dt>
+                                            <dd>{{activeApplication.ownerPostContent}}</dd>
+                                            <hr/>
+                                            <div ng-show="activeApplication.ownerImgUrl && activeApplication.ownerImgUrl != ''">
+                                                <dt>Image in the post</dt>
+                                                <dd><img class="img-responsive in-form-img"
+                                                         ng-src="{{activeApplication.ownerImgUrl}}"/></dd>
+                                                <hr/>
+                                            </div>
+                                            <dt>Time for you to post on Facebook</dt>
+                                            <dd>{{activeApplication.ownerActionTime|date:'medium'}}</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <br/>
+                                <a ng-show="activeApplication.status=='pending'" class="btn btn-yellow-fill pull-right"
+                                   ng-click="acceptApply(activeApplication)">Accept</a>
+                                <a ng-show="activeApplication.status=='accepted'" class="btn btn-lightgray-fill pull-right"
+                                   disabled>Accepted</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="form-group">-->
+        <!--<label for="postTitle">Post Title</label>-->
+        <!--<input type="text" class="form-control" id="postTitle" placeholder="Enter a title for your campaign"-->
+        <!--ng-model="campaign.topic" required>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label for="url">URL</label>-->
+        <!--<input type="text" class="form-control" id="url" ng-model="campaign.trackingUrl"-->
+        <!--placeholder="Enter the URL for the influencers to include in their posts">-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label for="headline">Headline</label>-->
+        <!--<textarea class="form-control" rows="5" id="headline" ng-model="campaign.details"></textarea>-->
+        <!--</div>-->
+
+
+        <!--<div class="form-group">-->
+        <!--<label for="thumbnailInput">Thumbnail</label>-->
+
+        <!--<div class="input-group col-lg-12">-->
+        <!--<div class="btn-group">-->
+        <!--<label class="btn upload-button" ng-model="imageType" uib-btn-radio="'url'" uncheckable-->
+        <!--active>-->
+        <!--<i class="fa fa-external-link"></i>-->
+        <!--Enter image URL-->
+        <!--</label>-->
+        <!--<label class="btn upload-button" ng-model="imageType" uib-btn-radio="'file'" uncheckable>-->
+        <!--<i class="fa fa-upload"></i>-->
+        <!--Upload an image-->
+        <!--</label>-->
+        <!--</div>-->
+        <!--<div ng-show="imageType == 'url'" heading="Enter thumbnail URL">-->
+        <!--<br><input id="imageUrl" type="text" ng-model="campaign.thumbnail"-->
+        <!--class="form-control input"-->
+        <!--name="thumbnailInput" id="thumbnailInput" placeholder="Enter a thumbnail URL">-->
+
+        <!--</div>-->
+        <!--<div ng-show="imageType == 'file'" heading="Upload an thumbnail">-->
+        <!--<br><input name="file" type="file" file/>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--</div>-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="form-group" ng-if="campaign.type=='pay'">-->
+        <!--<label for="budgeInput">Budget</label>-->
+        <!--<div class="input-group">-->
+        <!--<div class="input-group-addon">USD</div>-->
+        <!--<input type="number" ng-model="campaign.budget" class="form-control col-lg-1"-->
+        <!--id="budgeInput" name="budgeInput" placeholder="Enter a budget you will pay"-->
+        <!--required>-->
+
+        <!--<div class="input-group-addon">for</div>-->
+        <!--<select class="form-control">-->
+        <!--<option>Click ($0.05)</option>-->
+        <!--<option>Install ($2)</option>-->
+        <!--<option>View ($0.015)</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="form-group">-->
+        <!--<label for="followersNumInput">Number of followers required</label>-->
+
+        <!--<div class="input-group col-lg-6">-->
+        <!--<input type="number" ng-model="campaign.numberOfFollowers"-->
+        <!--class="form-control" id="followersNumInput" name="followersNumInput"-->
+        <!--placeholder="Enter a number" required>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group">-->
+        <!--<label for="ageRangeInput">Age Range</label><br/>-->
+
+        <!--<div id="ageRangeInput" class="btn-group" data-toggle="buttons">-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('13-17')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>13-17</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('18-24')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>18-24</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('25-34')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>25-34</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('35-44')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>35-44</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('45-54')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>45-54</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('55-64')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>55-64</label>-->
+        <!--</label>-->
+        <!--<label class="age-group-button btn" ng-click="toggleAgeGroup('65+')">-->
+        <!--<input type="checkbox" autocomplete="off"><label>65+</label>-->
+        <!--</label>-->
+        <!--</div>-->
+
+        <!--&lt;!&ndash;<div id="ageRangeInput" class="row">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="col-lg-5">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="input-group">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span class="input-group-addon">From</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;<input type="number" ng-model="campaign.minAge" class="form-control">&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="col-lg-5">&ndash;&gt;-->
+        <!--&lt;!&ndash;<div class="input-group">&ndash;&gt;-->
+        <!--&lt;!&ndash;<span class="input-group-addon">To</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;<input type="number" class="form-control" ng-model="campaign.maxAge">&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--</div>-->
+
+        <!--<div class="form-group" ng-if="campaign.type=='pay'">-->
+        <!--<label>Audience Gender (Optional)</label>-->
+        <!--<div class="btn-group input-group">-->
+        <!--<label class="gender-button btn btn-default" ng-model="campaign.gender" uib-btn-radio="'female'" uncheckable>Female</label>-->
+        <!--<label class="gender-button btn btn-default" ng-model="campaign.gender" uib-btn-radio="'male'" uncheckable>Male</label>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="form-group" ng-if="campaign.type=='pay'">-->
+        <!--<label>Location</label>-->
+        <!--<div class="input-group col-lg-10">-->
+        <!--<div country-select="campaign.location"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+
+
+        <!--<div class="form-group">-->
+        <!--<label>Select Platforms</label><br/>-->
+
+        <!--<div id="platform-selector" class="btn-group" data-toggle="buttons">-->
+        <!--<label class="platform-button btn" ng-click="togglePlatform('facebook')">-->
+        <!--<input type="checkbox" autocomplete="off"><i class="fa fa-facebook"/>-->
+        <!--</label>-->
+        <!--<label class="platform-button btn" ng-click="togglePlatform('twitter')">-->
+        <!--<input type="checkbox" autocomplete="off"><i class="fa fa-twitter"></i>-->
+        <!--</label>-->
+        <!--&lt;!&ndash;-->
+        <!--<label class="platform-button btn">-->
+        <!--<input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-youtube"/>-->
+        <!--</label>-->
+        <!--<label class="platform-button btn">-->
+        <!--<input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-linkedin"></i>-->
+        <!--</label>-->
+        <!--<label class="platform-button btn">-->
+        <!--<input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-instagram"></i>-->
+        <!--</label>-->
+        <!--<label class="platform-button btn">-->
+        <!--<input type="checkbox" autocomplete="off" ng-model="campaign.socialTypes.twitter"><i class="fa fa-envelope"></i>-->
+        <!--</label>-->
+        <!--&ndash;&gt;-->
+        <!--</div>-->
+
+
+        <!--</div>-->
+        <!--&lt;!&ndash;-->
+        <!--<div class="form-group">-->
+        <!--<label for="callToAction">Call To Action Type:</label>-->
+
+        <!--<div class="dropdown">-->
+        <!--<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"-->
+        <!--data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">-->
+        <!--Read More-->
+        <!--<span class="caret"></span>-->
+        <!--</button>-->
+        <!--<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">-->
+        <!--<li><a href="#">Action</a></li>-->
+        <!--<li><a href="#">Another action</a></li>-->
+        <!--<li><a href="#">Something else here</a></li>-->
+        <!--<li role="separator" class="divider"></li>-->
+        <!--<li><a href="#">Separated link</a></li>-->
+        <!--</ul>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="form-group" ng-if="campaign.type=='pay'">-->
+        <!--<label>Categories (Press Enter to create a category)</label>-->
+        <!--<div class="input-group col-lg-10">-->
+        <!--<tags-input ng-model="campaign.categories"></tags-input>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="form-group">-->
+        <!--<label>Preview:</label>-->
+
+        <!--<div class="preview">-->
+        <!--<div id="previewTitle"></div>-->
+
+        <!--<div id="previewDescription"></div>-->
+
+        <!--<img id="previewThumbnail" src="img/placeholder.jpg"/>-->
+        <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="row">-->
+        <!--<div class="col-md-4">-->
+        <!--<button ng-click="close()" id="cancel-create-campaign-button"-->
+        <!--class="card-button btn btn-lightgray-fill">-->
+        <!--Cancel-->
+        <!--</button>-->
+        <!--</div>-->
+        <!--<div class="col-md-8">-->
+        <!--<button class="card-button btn btn-yellow-fill" ng-click="submit()">-->
+        <!--Post Campaign-->
+        <!--</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<script>-->
+        <!--$(function () {-->
+        <!--// Preview functionality-->
+        <!--$('#postTitle').on('input', function (e) {-->
+        <!--$('#previewTitle').html($('#postTitle').val());-->
+        <!--});-->
+
+        <!--$('#headline').on('input', function (e) {-->
+        <!--$('#previewDescription').html($('#headline').val());-->
+        <!--});-->
+
+        <!--$('#imageUrl').on('input', function (e) {-->
+        <!--if ($('#imageUrl').val() != "")-->
+        <!--$('#previewThumbnail').attr("src", $('#imageUrl').val()); else-->
+        <!--$('#previewThumbnail').attr("src", "img/placeholder.jpg");-->
+        <!--});-->
+
+        <!--});-->
+        <!--</script>-->
+    </div>
+</div>

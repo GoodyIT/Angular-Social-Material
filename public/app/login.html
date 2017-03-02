@@ -1,0 +1,78 @@
+<div ng-controller="loginCtrl">
+    <script type="text/ng-template" id="login-modal.htm">
+        <div class="login-popup">
+            <div class="modal-body" >
+                <div class="row" >
+
+                    <div class="text-center">
+                        <!-- <div ng-if="!fixType">
+                            <div class="row"><h3>I am...</h3></div>
+                            <div class="row role-row" >
+                                <div class="col-md-6">
+                                    <label class="btn" ng-class="{'btn-yellow-fill':type =='influencer', 'btn-lightgray-fill': type != 'influencer'}" ng-click="setUserType('influencer')"><i class="fa fa-user"/><br>a celebrity</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="btn " ng-class="{'btn-yellow-fill':type =='brand', 'btn-lightgray-fill': type != 'brand'}" ng-click="setUserType('brand')"><i class="fa fa-tag"/><br>an advertiser</label>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="col-md-12">
+                            <br>
+                            <div class="text-center">
+                                <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:200px;"/>
+                                <!-- <h5 class=" text-black" ng-if="fixType"><span ng-if="type=='influencer'">Celebrity</span><span ng-if="type=='brand'">Advertiser</span>&nbsp;Login</h5> -->
+                            </div>
+                            <br>
+                            <div ng-if="alert" class="error-text">{{alert.msg}}</div>
+                            <br>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12" ng-if="allowFacebookOnly">
+                        <form  class="form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                  <button type="button" ng-disabled="type!='brand' && type != 'influencer'" ng-click="loginToFacebook()" class="btn btn-block btn-facebook btn-social">
+                                      <i class="fa fa-facebook"></i>Sign in with Facebook</button>
+                                  <a href="" ng-click="backToSearchPage()" class="btn btn-lightgray-fill">Go to Search</a>
+                                  <br>
+                                  <br>
+                                    <small>By signing up you confirm that you accept the
+                                        <a target="_blank" href="http://www.famepick.com/terms/">
+                                        Terms & Conditions</a></small>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div ng-if="!allowFacebookOnly" >
+                        <div class="col-md-12">
+                            <form class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-md-12 md-padding">
+                                        <md-input-container class="md-block margin-0">
+                                            <input ng-model="account.email" type="email" name="email" id="email" placeholder="Email"/>
+                                        </md-input-container>
+                                        <md-input-container class="md-block margin-top-0">
+                                            <input ng-model="account.password" type="password" name="password" id="password" placeholder="Password"/>
+                                        </md-input-container>
+                                        <div class="text-center">
+                                            <small>Don't have an account? <a href ng-click="gotoPageAndClose('#/signup')">Sign up here</a></small>
+                                            <button type="submit" ng-disabled="account.email==='' || account.password === ''" ng-click="emailLogin()" class="btn btn-block btn-info">Login</button>
+                                            <button type="button" ng-disabled="type!='brand' && type != 'influencer'" ng-click="loginToFacebook()" class="btn btn-block btn-facebook btn-social">
+                                                <i class="fa fa-facebook"></i>Sign in with Facebook</button>
+                                            <br>
+                                            <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </script>
+
+</div>

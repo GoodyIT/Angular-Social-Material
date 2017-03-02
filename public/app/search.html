@@ -1,0 +1,102 @@
+<div class="container">
+    <div class="page-title">
+        <img src="https://s3.amazonaws.com/famepick-web-prod/logo.png" style="width:230px;" class="pull-left"/>
+        <h2 class="pull-left">&nbsp;CELEBRITY INDEX</h2>
+        <md-button class="pull-right md-raised md-primary" href="#/signup" ng-if="!$root.user"><h5 class="margin-10">Sign Up / Login</h5></md-button>
+    </div>
+    <p>Search our database for influential people to help promote + endorse your product.</p>
+    <div >
+        <br>
+        <form class="text-center">
+            <div class="row">
+                <div class="col-sm-8 col-xs-8 col-lg-9"><input type="text" ng-model="keyword" placeholder="Enter search keyword..." class="input form-control input-lg"/></div>
+                <div class="col-sm-2 col-xs-4 col-lg-1"><md-button type="submit" ng-click="refreshCurrentPageData(keyword)" class="md-raised md-default md-primary"><h5 style="margin:0;">Search</h5></md-button></div>
+                <div class="col-sm-2 col-xs-12">
+                    <md-button ng-init="showFilters = false;" aria-label="flat button" class="md-default md-primary" ng-click="showFilters = !showFilters" ><h5><i class="fa fa-filter" aria-hidden="true"></i>&nbsp;Filters</h5>
+                    </md-button>
+                </div>
+            </div>
+        </form>
+        <br>
+        <form class="form-inline" ng-if="showFilters">
+            <div class="form-group">
+                <md-select placeholder="Category" ng-model="filter.filterCategory">
+                    <md-option value="Actor/Director">Actor/Director</md-option>
+                    <md-option value="Athlete">Athlete</md-option>
+                    <md-option value="Artist">Artist</md-option>
+                    <md-option value="Author">Author</md-option>
+                    <md-option value="Entertainer">Entertainer</md-option>
+                    <md-option value="Musician/Band">Musician/Band</md-option>
+                    <md-option value="Public Figure">Public Figure</md-option>
+                </md-select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <md-select ng-model="filter.sortBy" placeholder="Sort by">
+                    <md-option value="likes">Likes</md-option>
+                    <md-option value="talk_about">Talk about</md-option>
+                    <md-option value="name">Name</md-option>
+                </md-select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <md-select ng-model="filter.minFollowers" placeholder="Minimum Followers" >
+                    <md-option value="1000">1K</md-option>
+                    <md-option value="50000">50K</md-option>
+                    <md-option value="100000">100K</md-option>
+                    <md-option value="200000">200K</md-option>
+                    <md-option value="300000">300K</md-option>
+                    <md-option value="500000">500K</md-option>
+                    <md-option value="800000">800K</md-option>
+                    <md-option value="1000000">1M</md-option>
+                    <md-option value="1500000">1.5M</md-option>
+                    <md-option value="2000000">2M</md-option>
+                </md-select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <md-select ng-model="filter.talkAbout" placeholder="Minimum Talk About">
+                    <md-option value="100">100</md-option>
+                    <md-option value="200">200</md-option>
+                    <md-option value="500">500</md-option>
+                    <md-option value="800">800</md-option>
+                    <md-option value="1000">1K</md-option>
+                    <md-option value="2000">2K</md-option>
+                    <md-option value="5000">5K</md-option>
+                    <md-option value="8000">8K</md-option>
+                    <md-option value="10000">10K</md-option>
+                    <md-option value="20000">20K</md-option>
+                    <md-option value="50000">50K</md-option>
+                    <md-option value="80000">80K</md-option>
+                </md-select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <label class="form-check-label">
+                    <md-checkbox ng-model="filter.verified" class="md-primary" type="checkbox">Facebook Verified</md-checkbox>
+                </label>
+            </div>
+            <br>
+            <br>
+        </form>
+        <div class="row">
+            <div class="col-sm-12">
+                <p  style="word-break:break-word;" ng-if="::!(pages && pages.length === 0 && !loadingSearch)">Popular keywords:&nbsp;<a ng-click="useKeyword(suggestedKeyword)" ng-repeat="suggestedKeyword in ::suggestedKeywords">{{::suggestedKeyword}}<span ng-if="::$index < suggestedKeywords.length-1">&nbsp;&nbsp;&nbsp;&nbsp;</span></a>
+                    <a class="pull-right" ng-click="useKeyword('')"><i class="fa fa-refresh"></i> Show All</a>
+                <h4 class="pull-right"><a href ng-click="isListView = false" ><md-icon class="fa fa-th-large md-cyan-theme" ng-class="{'md-accent':!isListView, 'md-primary':isListView}"></md-icon> </a>&nbsp;<a href  ng-click="isListView = true"><md-icon class="fa fa-th-list md-cyan-theme" ng-class="{'md-accent':isListView, 'md-primary':!isListView}"></md-icon> </a></h4>
+                </p>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div ng-repeat="page in pages" ng-class="{'list-view col-lg-6 col-sm-12':isListView,'col-md-4 col-lg-3 col-sm-6': !isListView}">
+            <search-result-card displayed-pages="pages" page="page" keyword="{{keyword}}" list-view="isListView"></search-result-card>
+        </div>
+        <div ng-if="loadingSearch" class="text-center">
+            <md-progress-circular class="margin-auto"  md-mode="indeterminate"></md-progress-circular>
+            <br>
+            <p>Searching in our database of 10,000+ people...</p>
+        </div>
+        <div ng-if="pages && pages.length === 0 && !loadingSearch" class="text-center">
+            <p>No results found for "{{keyword}}". Please try another keyword or choose from the popular keywords below.</p>
+            <p><a ng-click="useKeyword(suggestedKeyword)" ng-repeat="suggestedKeyword in ::suggestedKeywords">{{::suggestedKeyword}}<span ng-if="::$index < suggestedKeywords.length-1">,&nbsp;</span></a></p>
+        </div>
+    </div>
+</div>

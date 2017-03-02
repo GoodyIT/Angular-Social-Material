@@ -1,0 +1,70 @@
+<div class="fp-popup">
+    <div class="modal-header">
+        <a class="fa fa-times close-btn" href ng-click="close()"></a>
+        <h3 class="modal-title">Matching Results for {{campaign.topic}} <span style="color:black;">({{campaign.categories}})</span></h3>
+    </div>
+    <div class="modal-body">
+        <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+        <div ng-repeat="page in matches" class="col-md-4" ng-if="page.showData">
+            <div class="match-item fp-media-card">
+                <a class="col-md-6"><img class="img-circle user-avatar" ng-src="{{page.profile.picture}}"/></a>
+                <a class="col-md-6">
+                    <h5 ng-if="page.profile.facebookDefaultPageName">{{page.profile.facebookDefaultPageName}}</h5>
+                    <h5 ng-if="!page.profile.facebookDefaultPageName">{{page.profile.name}}</h5>
+                </a>
+                <a ng-href="http://facebook.com/{{page.pageId}}" class="icon-fb icon sm- pull-right" target="_blank"></a>
+                <div class="donut-chart-label">
+                    <h6 class="quantity-text" ng-show="isNumber(totalLikesMap[page.profile.fbAudienceInterests.pageId])">{{totalLikesMap[page.profile.fbAudienceInterests.pageId]}}&nbsp;Followers</h6>
+                </div>
+                <hr>
+                <div class="col-md-12 text-center">
+                    <h5>Fans Top Interests</h5>
+                    <h6>{{page.profile.categories}}</h6>
+                    <hr>
+                    <h5>Fans Top Pages Likes</h5>
+                    <ol class="text-left" ng-show="isNumber(totalLikesMap[page.profile.fbAudienceInterests.pageId])">
+                        <li ng-repeat="item in page.profile.fbAudienceInterests.pages" ng-if="$index < 5" >{{item.title}} - {{item.count}} likes</li>
+                    </ol>
+                    <div ng-show="!isNumber(totalLikesMap[page.profile.fbAudienceInterests.pageId]) || page.profile.fbAudienceInterests.pages.length == 0">
+                        Data Not Available
+                    </div>
+                    <!--<nvd3 ng-class="col-md-6" options="page.chartOptions"-->
+                          <!--data="page.chartData"></nvd3>-->
+                    <!--<div class="col-md-6">-->
+                        <!--<div class="gender-div col-md-12">-->
+                            <!--<div class="col-md-6">-->
+                                <!--<i class="fa fa-female"></i>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-6">-->
+                                <!--<h4>{{Math.round((page.gender.female/(page.gender.male+page.gender.female))*100)}}%</h4>-->
+                                <!--Female-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="gender-div col-md-12">-->
+                            <!--<div class="col-md-6">-->
+                                <!--<i class="fa fa-male"></i>-->
+                            <!--</div>-->
+                            <!--<div class="col-md-6">-->
+                                <!--<h4>{{Math.round((page.gender.male/(page.gender.male+page.gender.female))*100)}}%</h4>-->
+                                <!--Male-->
+                            <!--</div>-->
+                        <!--</div>-->
+
+                    <!--</div>-->
+                </div>
+            <div class="match-item-action text-center">
+                <div><a class="fa fa-facebook-square" target="_blank" ng-href="http://facebook.com/{{page.profile.fbAudienceInterests.pageId}}"/></div>
+                <a class="btn btn-yellow" ng-href="#/userDetails?userId={{page.userId}}&pageId={{page.pageId}}" target="_blank">View Profile</a>
+                <a ng-show="!page.hasWaved" class="btn btn-yellow-fill" ng-click="selectMatch(page)" >Wave to user</a>
+                <a ng-show="page.hasWaved" class="btn btn-lightgray-fill" disabled="true" >Waved</a>
+            </div>
+            </div>
+        </div>
+        <div class="form-group modal-footer">
+            <div class="col-md-12">
+                <button ng-show="!redirection" class="btn btn-black-fill" type="button" ng-click="close()">Close</button>
+                <button ng-show="redirection && redirection != ''" class="btn btn-yellow" type="button" ng-click="redirect()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
